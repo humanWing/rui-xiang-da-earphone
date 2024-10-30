@@ -1,0 +1,8 @@
+sdk\apps\earphone\board\br28
+目录下：
+board_config.h
+board_jl701n_demo_cfg.h
+board_jl701n_demo.c
+
+目前7018和7016芯片都是用这个配置文件来配置，请尽量都在这里面配置，并对应配置地方请详细注释。
+
