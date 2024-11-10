@@ -390,7 +390,7 @@ void vbat_check(void *priv)
                 power_normal_cnt = 0;
                 cur_bat_st = VBAT_WARNING;
                 if ((low_voice_first_flag && low_voice_cnt > 1) || //第一次进低电10s后报一次
-                    (!low_voice_first_flag && low_voice_cnt >= 5)) {
+                    (!low_voice_first_flag && low_voice_cnt >= 15)) {
                     low_voice_first_flag = 0;
                     low_voice_cnt = 0;
                     if (!lowpower_timer) {
