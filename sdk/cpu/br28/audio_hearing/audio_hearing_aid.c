@@ -42,6 +42,7 @@
 //#define REALHEAR_ENABLE 1 // liurui
 
 int realhear_mode_open = 0;
+float realhear_mode_noise_value = 1.0;
 #ifdef REAL_HEAR_DEMO
 static unsigned int demo_cnt = 0;
 #endif
@@ -224,16 +225,16 @@ extern struct audio_adc_hdl adc_hdl;
 #define DHA_HS_NOTCH_ENABLE 0 //1 // 1
 
 /*噪声抑制Noise Suppress*/
-#define DHA_NS_ENABLE 0 //0 // 1 //0
+#define DHA_NS_ENABLE 1 //0 // 1 //0
 
 /*变采样模块：如果输入输出采样率一致，条件编译自动关闭使能*/
 #define DHA_SRC_ENABLE 0 // 1
 
 /*音量控制模块*/
-#define DHA_VOLUME_ENABLE 0 // 1
+#define DHA_VOLUME_ENABLE 1 // 1
 
 /*Noise-Gate噪声门限控制*/
-#define DHA_NOISE_GATE_ENABLE 0 //0
+#define DHA_NOISE_GATE_ENABLE 1 //0
 
 //*********************************************************************************//
 //          						数据结构定义  					           	   //
@@ -1297,13 +1298,13 @@ static void hearing_volume_run(s16 *data, int len)
     audio_digital_vol_run(HEARING_DVOL, data, len);
 }
 /*设置音量*/
-static void hearing_volume_set(u8 volume)
+void hearing_volume_set(u8 volume)
 {
     dha_schedule.volume = volume;
     audio_digital_vol_set(HEARING_DVOL, volume);
 }
 /*获取当前音量大小*/
-static int hearing_volume_get(void)
+int hearing_volume_get(void)
 {
     return audio_digital_vol_get(HEARING_DVOL);
 }
@@ -2074,10 +2075,10 @@ int audio_hearing_aid_open(void)
 #endif /*TCFG_EQ_ENABLE && DHA_EQ2_ENABLE*/
 
 #if DHA_NS_ENABLE
-    hdl->llns = llns_init(param->sample_rate, 0.05f, 1.0f);
+    hdl->llns = llns_init(param->sample_rate, 0.05f, realhear_mode_noise_value);
     if (hdl->channel == 2)
     {
-        hdl->llns_1 = llns_init(param->sample_rate, 0.05f, 1.0f);
+        hdl->llns_1 = llns_init(param->sample_rate, 0.05f, realhear_mode_noise_value);
     }
     // mem_stats();
 #endif /*DHA_NS_ENABLE*/

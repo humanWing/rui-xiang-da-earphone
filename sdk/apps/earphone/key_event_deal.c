@@ -35,13 +35,15 @@
 #define LOG_CLI_ENABLE
 #include "debug.h"
 
-#define POWER_OFF_CNT       6
+#define POWER_OFF_CNT       20  // 按键KEY_POWEROFF_HOLD 后的设置时间是10ms
+#define CALL_INCOMING_CNT   30  // 按键KEY_POWEROFF_HOLD 后的设置时间是10ms
 
 
 #define TCFG_AUDIO_HEARING_AID_ENABLE 1 //liurui testing
 
 static u8 goto_poweroff_cnt = 0;
 static u8 goto_poweroff_flag = 0;
+static u8 bt_call_incoming_cnt = 0;
 extern u8 key_table[KEY_NUM_MAX][KEY_EVENT_MAX];
 extern u8 get_max_sys_vol(void);
 extern void sys_enter_soft_poweroff(void *priv);
@@ -89,6 +91,7 @@ void volume_up_down_direct(s8 value);
 // {{}}
 
 extern int realhear_mode_open;
+extern float realhear_mode_noise_value;
 static int realhear_vol_val = 80;
 extern void real_volume_set(int val);
 
@@ -435,8 +438,9 @@ int app_earphone_key_event_handler(struct sys_event *event)
             if ((get_call_status() == BT_CALL_INCOMING) ||
                 (get_call_status() == BT_CALL_OUTGOING)) {
                 log_info("key call reject\n");
-                user_send_cmd_prepare(USER_CTRL_HFP_CALL_HANGUP, 0, NULL);
+                // user_send_cmd_prepare(USER_CTRL_HFP_CALL_HANGUP, 0, NULL);
                 goto_poweroff_flag = 0;
+                bt_call_incoming_cnt = 0;
                 break;
             } else if (get_call_status() == BT_CALL_ACTIVE) {
                 log_info("key call hangup\n");
@@ -488,6 +492,25 @@ int app_earphone_key_event_handler(struct sys_event *event)
             }
 #endif //CONFIG_TWS_POWEROFF_SAME_TIME
 
+        }
+        else
+        {
+            if ((BT_STATUS_CONNECTING == get_bt_connect_status()) ||
+            (BT_STATUS_TAKEING_PHONE == get_bt_connect_status()) ||
+            (BT_STATUS_PLAYING_MUSIC == get_bt_connect_status()))
+            {
+                if ((get_call_status() == BT_CALL_INCOMING)
+                    || (get_call_status() == BT_CALL_OUTGOING))
+                {
+                    bt_call_incoming_cnt++;
+
+                    if (bt_call_incoming_cnt >= CALL_INCOMING_CNT)
+                    {
+                        log_info("key call reject\n");
+                        user_send_cmd_prepare(USER_CTRL_HFP_CALL_HANGUP, 0, NULL);
+                    }
+                }
+            }
         }
         break;
     case  KEY_MUSIC_PREV:
@@ -542,38 +565,96 @@ int app_earphone_key_event_handler(struct sys_event *event)
         //====================================//
         break;
     case  KEY_VOL_UP:
-        if (realhear_mode_open == 1)
+
+        log_debug("up key\n");
+
+        if ((get_call_status() == BT_CALL_OUTGOING) ||
+            (get_call_status() == BT_CALL_ALERT))
         {
-            STATUS *p_tone = get_tone_config();
-//             static int wdrc_mode_index = 1; //【0- 3】
-// extern void real_wdrc_volume_set(int mode);
-            wdrc_mode_index ++;
-            if(wdrc_mode_index > 5)
-            {
-                 wdrc_mode_index = 5;
- 
-                // tone_play_index(p_tone->max_vol, 0);
-                tone_play_index_no_tws(p_tone->max_vol, 0);
-                real_wdrc_volume_set(wdrc_mode_index);
-            }
-            else{
-                real_wdrc_volume_set(wdrc_mode_index);
-
-                //charge_full
-                 tone_play_index_no_tws(p_tone->max_vol, 0);
-            }
-
-            // realhear_vol_val = realhear_vol_val + 10;
-            // if (realhear_vol_val >= 100)
-            // {
-            //     realhear_vol_val = 100;
-            //     STATUS *p_tone = get_tone_config();
-            //     tone_play_index(p_tone->max_vol, 0);
-            // }
-            // real_volume_set(realhear_vol_val);
+            user_send_cmd_prepare(USER_CTRL_HFP_CALL_HANGUP, 0, NULL);
+        }
+        else if (get_call_status() == BT_CALL_INCOMING)
+        {
+            user_send_cmd_prepare(USER_CTRL_HFP_CALL_ANSWER, 0, NULL);
+        }
+        else if (get_call_status() == BT_CALL_ACTIVE)
+        {
+            user_send_cmd_prepare(USER_CTRL_HFP_CALL_HANGUP, 0, NULL);
         }
         else
-            volume_up(1);
+        {
+            static u8 realhear_mode_vo_toggle = 0;
+            static u8 get_hearing_vo = 0;
+            extern void hearing_volume_set(u8 volume);
+            extern int hearing_volume_get(void);
+
+
+            if (realhear_mode_open == 1)
+            {
+                if (get_hearing_vo == 0)
+                {
+                    get_hearing_vo = 1;
+                    wdrc_mode_index = hearing_volume_get();
+                }
+
+                STATUS *p_tone = get_tone_config();
+    //             static int wdrc_mode_index = 1; //【0- 3】
+    // extern void real_wdrc_volume_set(int mode);
+
+                log_info("wdrc_mode_index:%d %d\n", wdrc_mode_index, realhear_mode_vo_toggle);
+                if (1 == realhear_mode_vo_toggle)
+                {
+
+                    wdrc_mode_index --;
+                    if(wdrc_mode_index < 1)
+                    {
+                        wdrc_mode_index = 1;
+                        realhear_mode_vo_toggle = 0;
+                        // tone_play_index_no_tws(p_tone->max_vol, 0);
+                        hearing_volume_set(wdrc_mode_index);
+                    }
+                    else
+                    {
+                        hearing_volume_set(wdrc_mode_index);
+
+                        // tone_play_index_no_tws(p_tone->max_vol, 0);
+                    }
+                }
+                else
+                {
+                    wdrc_mode_index++;
+                    if(wdrc_mode_index > 16)
+                    {
+                        wdrc_mode_index = 16;
+        
+                        realhear_mode_vo_toggle = 1;
+                        // tone_play_index(p_tone->max_vol, 0);
+                        tone_play_index_no_tws(p_tone->max_vol, 0);
+                        hearing_volume_set(wdrc_mode_index);
+                    }
+                    else{
+                        hearing_volume_set(wdrc_mode_index);
+
+                        //charge_full
+                        // tone_play_index_no_tws(p_tone->max_vol, 0);
+                    }
+
+                    // realhear_vol_val = realhear_vol_val + 10;
+                    // if (realhear_vol_val >= 100)
+                    // {
+                    //     realhear_vol_val = 100;
+                    //     STATUS *p_tone = get_tone_config();
+                    //     tone_play_index(p_tone->max_vol, 0);
+                    // }
+                    // real_volume_set(realhear_vol_val);
+                }
+            }
+            else
+            {
+                // volume_up(1);
+            }
+        }
+
         break;
     case  KEY_VOL_DOWN:
         if (realhear_mode_open == 1)
@@ -722,8 +803,8 @@ int app_earphone_key_event_handler(struct sys_event *event)
         audio_hearing_aid_demo();
 
         // {{ realhear }}
-        STATUS *p_tone = get_tone_config();
-        tone_play_index(p_tone->max_vol, 0);
+        // STATUS *p_tone = get_tone_config();
+        // tone_play_index(p_tone->max_vol, 0);
         // {{ realhear }}
 
         break;
@@ -774,6 +855,34 @@ int app_earphone_key_event_handler(struct sys_event *event)
         audio_anc_mult_scene_switch(1);
         break;
 #endif/*ANC_MULT_ORDER_ENABLE*/
+
+    case KEY_HEARING_NOISE_SWITCH:
+        if (1 == realhear_mode_open)
+        {
+            #define REALHEAR_MODE_NOISE_LEVEL1  (1)
+            #define REALHEAR_MODE_NOISE_LEVEL2  (12)
+            #define REALHEAR_MODE_NOISE_LEVEL3  (30)
+
+            audio_hearing_aid_suspend();
+
+            int level = (int)(realhear_mode_noise_value + 0.5);
+
+            if (level <= REALHEAR_MODE_NOISE_LEVEL1)
+            {
+                realhear_mode_noise_value = REALHEAR_MODE_NOISE_LEVEL2;
+            }
+            else if (level <= REALHEAR_MODE_NOISE_LEVEL2)
+            {
+                realhear_mode_noise_value = REALHEAR_MODE_NOISE_LEVEL3;
+            }
+            else
+            {
+                realhear_mode_noise_value = REALHEAR_MODE_NOISE_LEVEL1;
+            }
+
+            audio_hearing_aid_resume();
+        }
+        break;
     }
     return ret;
 }

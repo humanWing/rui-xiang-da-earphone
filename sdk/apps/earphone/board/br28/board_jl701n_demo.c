@@ -136,12 +136,12 @@ u8 key_table[KEY_NUM_MAX][KEY_EVENT_MAX] = {
 };
 #else
 u8 key_table[KEY_NUM_MAX][KEY_EVENT_MAX] = {
-    // SHORT                        LONG                HOLD                UP              DOUBLE           TRIPLE
-    {KEY_NULL,                      KEY_POWEROFF,       KEY_POWEROFF_HOLD,  KEY_NULL,       KEY_NULL,       KEY_MODE_SWITCH},   //KEY_0
-    {KEY_MUSIC_PP,                  KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,       KEY_NULL},          //KEY_1
-    {KEY_VOL_DOWN,                  KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,       KEY_NULL},          //KEY_2
-    {KEY_VOL_UP,                    KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,       KEY_NULL},          //KEY_2
-    {KEY_HEARING_AID_TOGGLE,        KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,       KEY_NULL},          //KEY_2
+    // SHORT                        LONG                HOLD                UP              DOUBLE                      TRIPLE
+    {KEY_VOL_UP,                    KEY_POWEROFF,       KEY_POWEROFF_HOLD,  KEY_NULL,       KEY_HEARING_NOISE_SWITCH,   KEY_MODE_SWITCH},   //KEY_0
+    {KEY_MUSIC_PP,                  KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,                   KEY_NULL},          //KEY_1
+    {KEY_VOL_DOWN,                  KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,                   KEY_NULL},          //KEY_2
+    {KEY_VOL_UP,                    KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,                   KEY_NULL},          //KEY_2
+    {KEY_HEARING_AID_TOGGLE,        KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,                   KEY_NULL},          //KEY_2
 };
 #endif
 

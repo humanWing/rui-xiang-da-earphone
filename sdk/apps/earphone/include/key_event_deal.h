@@ -78,6 +78,9 @@ enum {
     KEY_WIND_NOISE_DET_SWITCH, /*风噪检测开关*/
     KEY_WIDE_AREA_TAP_SWITCH, /*广域点击开关*/
     KEY_ANC_MULT_SCENE_SWITCH,	/*多滤波器切换demo*/
+
+    KEY_HEARING_NOISE_SWITCH, //< 辅听模式降噪模式切换
+
     KEY_NULL = 0xFF,
 };
 
