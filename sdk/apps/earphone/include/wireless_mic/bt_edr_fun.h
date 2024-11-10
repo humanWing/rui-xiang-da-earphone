@@ -15,7 +15,8 @@
 #define BACKGROUND_GOBACK   		  1
 #endif
 
-#define TIMEOUT_CONN_TIME             60 //超时断开之后回连的时间s
+////config
+#define TIMEOUT_CONN_TIME             120 //超时断开之后回连的时间s
 #define POWERON_AUTO_CONN_TIME        12  //开机去回连的时间
 
 #define PHONE_CALL_FORCE_POWEROFF     0   //通话时候强制关机

@@ -84,7 +84,7 @@ extern void ais_platform_asr_close(void);
 #include "debug.h"
 
 
-#define TIMEOUT_CONN_TIME         60 //超时断开之后回连的时间s
+#define TIMEOUT_CONN_TIME         120 //超时断开之后回连的时间s
 #define POWERON_AUTO_CONN_TIME    12  //开机去回连的时间
 #define TWS_RETRY_CONN_TIMEOUT    ((rand32() & BIT(0)) ? 200 : 400)
 #define PHONE_DLY_DISCONN_TIME    0//4000  //超时断开，快速连接上不播提示音
