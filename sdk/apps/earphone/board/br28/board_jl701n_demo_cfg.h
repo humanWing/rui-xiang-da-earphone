@@ -83,7 +83,7 @@
 //                                 USB 配置                                        //
 //*********************************************************************************//
 #define TCFG_PC_ENABLE                      DISABLE_THIS_MOUDLE//PC模块使能
-#define TCFG_UDISK_ENABLE					ENABLE_THIS_MOUDLE//U盘模块使能
+#define TCFG_UDISK_ENABLE					DISABLE_THIS_MOUDLE//U盘模块使能
 #define TCFG_OTG_USB_DEV_EN                 BIT(0)//USB0 = BIT(0)  USB1 = BIT(1)
 
 #include "usb_std_class_def.h"
@@ -737,7 +737,7 @@ DAC硬件上的连接方式,可选的配置：
 #define TCFG_CHARGESTORE_ENABLE				DISABLE_THIS_MOUDLE         //是否支持智能充电舱
 #define TCFG_TEST_BOX_ENABLE			    ENABLE_THIS_MOUDLE          //是否支持蓝牙测试盒
 #define TCFG_ANC_BOX_ENABLE			        CONFIG_ANC_ENABLE           //是否支持ANC测试盒
-#define TCFG_UMIDIGI_BOX_ENABLE				ENABLE_THIS_MOUDLE			//是否支持UMIDIGI充电舱
+#define TCFG_UMIDIGI_BOX_ENABLE				DISABLE_THIS_MOUDLE			//是否支持UMIDIGI充电舱
 #if TCFG_UMIDIGI_BOX_ENABLE
 #define _20MS_BIT							20							//传输20ms/Bit时使用
 #define _40MS_BIT							40							//传输40ms/Bit时使用
@@ -775,9 +775,9 @@ DAC硬件上的连接方式,可选的配置：
 //*********************************************************************************//
 //                                  LED 配置                                       //
 //*********************************************************************************//
-#define TCFG_PWMLED_ENABLE					DISABLE_THIS_MOUDLE			//是否支持PMW LED推灯模块
+#define TCFG_PWMLED_ENABLE					ENABLE_THIS_MOUDLE			//是否支持PMW LED推灯模块
 #define TCFG_PWMLED_IOMODE					LED_ONE_IO_MODE				//LED模式，单IO还是两个IO推灯
-#define TCFG_PWMLED_PIN						IO_PORTB_06					//LED使用的IO口
+#define TCFG_PWMLED_PIN						IO_PORTG_05					//LED使用的IO口
 //*********************************************************************************//
 //                                  时钟配置                                       //
 //*********************************************************************************//

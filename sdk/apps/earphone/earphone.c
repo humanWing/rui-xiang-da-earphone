@@ -2094,6 +2094,7 @@ static void bt_hci_event_page_timeout()
 
     bt_wait_phone_connect_control(1);
 #endif
+    ui_update_status(STATUS_BT_CON_TIMEOUT);
 }
 
 static void bt_hci_event_connection_timeout(struct bt_event *bt)

@@ -23,6 +23,7 @@ typedef struct _ui_var {
     u8 power_status;
     u8 current_status;
     volatile u8 ui_flash_cnt;
+    volatile u8 ui_flash_flag;
     cbuffer_t ui_cbuf;
     u8 ui_buf[UI_MANAGE_BUF];
     int sys_ui_timer;
@@ -54,6 +55,8 @@ u8 adv_get_led_status(void)
 }
 #endif
 
+#define GET_LED_BRIGHT_TIME(sec)            (sec * 1000 / 200)
+#define GET_LED_BRIGHT_TIME_START(sec)      (sec * 1000 / 200 - 1)
 void ui_manage_scan(void *priv)
 {
 
@@ -61,21 +64,55 @@ void ui_manage_scan(void *priv)
 
     sys_ui_var.sys_ui_timer = 0;
 
-    log_info("ui_flash_cnt:%d cur_ui_status:%d", sys_ui_var.ui_flash_cnt, sys_ui_var.current_status);
 
-    if (sys_ui_var.ui_flash_cnt == 0 || sys_ui_var.ui_flash_cnt == 7) {        //有特殊的闪烁状态等当前状态执行完再进入下一个状态
+    if (sys_ui_var.ui_flash_cnt == 0
+        || (sys_ui_var.ui_flash_cnt != 0 && (0 == sys_ui_var.ui_flash_flag))) {        //有特殊的闪烁状态等当前状态执行完再进入下一个状态
         if (get_ui_status(&sys_ui_var.current_status)) {
-            if (sys_ui_var.current_status >= STATUS_CHARGE_START && sys_ui_var.current_status <= STATUS_NORMAL_POWER) {
+            if (sys_ui_var.current_status >= STATUS_CHARGE_START
+                && sys_ui_var.current_status <= STATUS_NORMAL_POWER) {
                 sys_ui_var.power_status = sys_ui_var.current_status;
             } else {
                 sys_ui_var.other_status = sys_ui_var.current_status;
             }
+
+            switch(sys_ui_var.current_status)
+            {
+                case STATUS_POWERON:
+                    sys_ui_var.ui_flash_cnt = GET_LED_BRIGHT_TIME(1);    // 亮1S
+                    break;
+                case STATUS_POWEROFF:
+                    sys_ui_var.ui_flash_cnt = GET_LED_BRIGHT_TIME(3);   // 亮3秒
+                    break;
+                case STATUS_CHARGE_FULL:
+                    sys_ui_var.ui_flash_cnt = GET_LED_BRIGHT_TIME(5);   // 亮3秒
+                    break;
+                case STATUS_BT_TWS_START:
+                    sys_ui_var.ui_flash_cnt = 5;   // 闪2下
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
+    log_info("ui_flash_cnt:%d cur_ui_status:%d %d %d",
+                        sys_ui_var.ui_flash_cnt,
+                        sys_ui_var.current_status,
+                        sys_ui_var.power_status,
+                        sys_ui_var.other_status);
 
     if (sys_ui_var.ui_flash_cnt) {
         sys_ui_var.ui_flash_cnt --;
-        sys_ui_var.sys_ui_timer = usr_timeout_add(NULL, ui_manage_scan, 300, 1);
+
+        if (sys_ui_var.ui_flash_cnt)
+        {
+            sys_ui_var.ui_flash_flag = 1;
+        }
+        else
+        {
+            sys_ui_var.ui_flash_flag = 0;
+        }
+        sys_ui_var.sys_ui_timer = usr_timeout_add(NULL, ui_manage_scan, 200, 1);
     } else if (get_ui_status_len()) {
         sys_ui_var.sys_ui_timer = usr_timeout_add(NULL, ui_manage_scan, 100, 1);
     }
@@ -87,7 +124,8 @@ void ui_manage_scan(void *priv)
     }
 #endif
 
-    if (sys_ui_var.other_status != STATUS_POWEROFF && sys_ui_var.power_status != STATUS_NORMAL_POWER) {  //关机的状态优先级要高于电源状态
+    if (sys_ui_var.other_status != STATUS_POWEROFF
+        && sys_ui_var.power_status != STATUS_NORMAL_POWER) {  //关机的状态优先级要高于电源状态
         switch (sys_ui_var.power_status) {
         case STATUS_LOWPOWER:
             log_info("[STATUS_LOWPOWER]\n");
@@ -101,7 +139,32 @@ void ui_manage_scan(void *priv)
 
         case STATUS_CHARGE_FULL:
             log_info("[STATUS_CHARGE_FULL]\n");
-            pwm_led_mode_set(p_led->charge_full);
+            // pwm_led_mode_set(p_led->charge_full);
+            if (p_led->power_on == PWM_ONE_LED_BRIGHT_5S)
+            {
+                // if (sys_ui_var.ui_flash_cnt)
+                {
+                    // if (get_bt_tws_connect_status())
+                    // {
+                    //     sys_ui_var.ui_flash_cnt = 0;
+                    //     ui_manage_scan(NULL);
+                    //     return;
+                    // }
+
+                    if (GET_LED_BRIGHT_TIME_START(5) == sys_ui_var.ui_flash_cnt)
+                    {
+                        pwm_led_mode_set(PWM_LED0_ON);
+                    }
+                    else if (0 == sys_ui_var.ui_flash_cnt)
+                    {
+                        pwm_led_mode_set(PWM_LED0_OFF);
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
             return;
 
         case STATUS_CHARGE_ERR:
@@ -129,10 +192,31 @@ void ui_manage_scan(void *priv)
 
     switch (sys_ui_var.other_status) {
     case STATUS_POWERON:
-        log_info("[STATUS_POWERON]\n");
-        if (p_led->power_on != PWM_LED0_FLASH_THREE) {
+        // log_info("[STATUS_POWERON] %d %d %d\n", p_led->power_on, sys_ui_var.ui_flash_cnt, GET_LED_BRIGHT_TIME_START(1));
+        /* if (p_led->power_on != PWM_LED0_FLASH_THREE) {
             pwm_led_mode_set(p_led->power_on);
-        } else {
+        }
+        else  */if (p_led->power_on == PWM_ONE_LED_BRIGHT_1S)
+        {
+            // if (sys_ui_var.ui_flash_cnt)
+            {
+                // if (get_bt_tws_connect_status())
+                // {
+                //     sys_ui_var.ui_flash_cnt = 0;
+                //     ui_manage_scan(NULL);
+                //     return;
+                // }
+                if (GET_LED_BRIGHT_TIME_START(1) == sys_ui_var.ui_flash_cnt)
+                {
+                    pwm_led_mode_set(PWM_LED0_ON);
+                }
+                else if (0 == sys_ui_var.ui_flash_cnt)
+                {
+                    pwm_led_mode_set(PWM_LED_ALL_OFF);
+                }
+            }
+        }
+        else {
             if (sys_ui_var.ui_flash_cnt) {
                 if (get_bt_tws_connect_status()) {
                     sys_ui_var.ui_flash_cnt = 0;
@@ -149,9 +233,26 @@ void ui_manage_scan(void *priv)
         break;
     case STATUS_POWEROFF:
         log_info("[STATUS_POWEROFF]\n");
-        if (p_led->power_off != PWM_LED1_FLASH_THREE) {
+        /* if (p_led->power_off != PWM_LED1_FLASH_THREE) {
             pwm_led_mode_set(p_led->power_off);
-        } else {
+        }
+        else  */if (p_led->power_off == PWM_ONE_LED_BRIGHT_3S)
+        {
+            if (GET_LED_BRIGHT_TIME_START(3) == sys_ui_var.ui_flash_cnt)
+            {
+                pwm_led_mode_set(PWM_LED0_ON);
+            }
+            else if (0 == sys_ui_var.ui_flash_cnt)
+            {
+                pwm_led_mode_set(PWM_LED0_OFF);
+            }
+            else
+            {
+
+            }
+        }
+        else
+        {
             if (sys_ui_var.ui_flash_cnt) {
                 if (sys_ui_var.ui_flash_cnt % 2) {
                     pwm_led_mode_set(PWM_LED1_OFF);
@@ -168,7 +269,7 @@ void ui_manage_scan(void *priv)
         break;
 
     case STATUS_BT_SLAVE_CONN_MASTER:
-        pwm_led_mode_set(PWM_LED1_SLOW_FLASH);
+        // pwm_led_mode_set(PWM_LED1_SLOW_FLASH);
         break;
 
     case STATUS_BT_CONN:
@@ -214,6 +315,21 @@ void ui_manage_scan(void *priv)
         log_info("[STATUS_BT_TWS_DISCONN]\n");
         pwm_led_mode_set(p_led->tws_disconnect);
         break;
+    case STATUS_BT_TWS_START:
+        log_info("[STATUS_BT_TWS_START]%d\n", sys_ui_var.ui_flash_cnt);
+        if (sys_ui_var.ui_flash_cnt % 2)
+        {
+            pwm_led_mode_set(PWM_LED0_ON);
+        }
+        else
+        {
+            pwm_led_mode_set(PWM_LED0_OFF);
+        }
+        break;        
+    case STATUS_BT_CON_TIMEOUT:
+        log_info("[STATUS_BT_CON_TIMEOUT]\n");
+        pwm_led_mode_set(PWM_LED0_SLOW_FLASH);
+        break;
     }
 }
 
@@ -233,15 +349,19 @@ void ui_update_status(u8 status)
         ui_manage_init();
     }
     log_info("update ui status :%d", status);
-    if ((status == STATUS_POWERON && p_led->power_on == PWM_LED0_FLASH_THREE) || (status == STATUS_POWEROFF && p_led->power_off == PWM_LED1_FLASH_THREE)) {
-        log_info(">>>set ui_flash_cnt");
-        sys_ui_var.ui_flash_cnt = 7;
+    if (status == STATUS_POWERON || (status == STATUS_POWEROFF) || (status == STATUS_CHARGE_FULL) )
+    {
+        cbuf_write(&(sys_ui_var.ui_cbuf), &status, 1);
+        ui_manage_scan(NULL);
+        return;
     }
+
     cbuf_write(&(sys_ui_var.ui_cbuf), &status, 1);
     /* if (!sys_ui_var.sys_ui_timer) { */
     /*     sys_ui_var.sys_ui_timer = usr_timeout_add(NULL, ui_manage_scan, 10); */
     /* } */
-    if (sys_ui_var.ui_flash_cnt >= 1 && sys_ui_var.ui_flash_cnt <= 6) {
+    if (sys_ui_var.ui_flash_cnt)
+    {
         return;
     }
 

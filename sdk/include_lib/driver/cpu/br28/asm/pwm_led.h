@@ -31,7 +31,7 @@
 #define CFG_SINGLE_FAST_FLASH_FREQ			500		//LED单独快闪速度, ms闪烁一次(100 ~ 1000)
 #define CFG_SINGLE_FAST_LIGHT_TIME 			100  	//单灯快闪灯亮持续时间, 单位ms
 
-#define CFG_SINGLE_SLOW_FLASH_FREQ			2000	//LED单独慢闪速度, ms闪烁一次(1000 ~ 20000)
+#define CFG_SINGLE_SLOW_FLASH_FREQ			1000	//LED单独慢闪速度, ms闪烁一次(1000 ~ 20000)
 #define CFG_SINGLE_SLOW_LIGHT_TIME 			100  	//单灯慢闪灯亮持续时间, 单位ms
 
 #define CFG_DOUBLE_FAST_FLASH_FREQ			500		//LED交替快闪速度, ms闪烁一次(100 ~ 1000)
@@ -63,10 +63,11 @@ enum pwm_led_mode {
 
     PWM_LED0_ON,             		//mode3: 蓝亮
     PWM_LED0_OFF,            		//mode4: 蓝灭
-    PWM_LED0_SLOW_FLASH,           	//mode5: 蓝慢闪
-    PWM_LED0_FAST_FLASH,           	//mode6: 蓝快闪
+    PWM_LED0_SLOW_FLASH,           	//mode5: 蓝慢闪             // 1S闪烁一次
+    PWM_LED0_FAST_FLASH,           	//mode6: 蓝快闪             // 100ms闪烁一次
     PWM_LED0_DOUBLE_FLASH_5S,  		//mode7: 蓝灯5秒连闪两下
     PWM_LED0_ONE_FLASH_5S,    		//mode8: 蓝灯5秒连闪1下
+    PWM_LED0_ONE_FLASH_3S,    		//mode8: 蓝灯3秒连闪1下
 
     PWM_LED1_ON,             		//mode9:  红亮
     PWM_LED1_OFF,            		//mode10: 红灭
@@ -74,6 +75,7 @@ enum pwm_led_mode {
     PWM_LED1_FAST_FLASH,            //mode12: 红快闪
     PWM_LED1_DOUBLE_FLASH_5S,  		//mode13: 红灯5秒连闪两下
     PWM_LED1_ONE_FLASH_5S,    		//mode14: 红灯5秒闪1下
+    PWM_LED1_ONE_FLASH_3S,    		//mode14: 红灯3秒闪1下
 
     PWM_LED0_LED1_FAST_FLASH,   	//mode15: 红蓝交替闪（快闪）
     PWM_LED0_LED1_SLOW_FLASH, 		//mode16: 红蓝交替闪（慢闪）
@@ -89,6 +91,12 @@ enum pwm_led_mode {
 
     PWM_LED_USER_DEFINE_BEGIN = 0x50,
     PWM_LED_USER_DEFINE_MODE0,  	//用户自定义模式0:
+
+    PWM_ONE_LED_BRIGHT_1S,
+    PWM_ONE_LED_BRIGHT_3S,
+    PWM_ONE_LED_BRIGHT_5S,
+    PWM_LED_FLASH_TWO,
+
     PWM_LED_USER_DEFINE_END,
 
     PWM_LED_NULL = 0xFF,

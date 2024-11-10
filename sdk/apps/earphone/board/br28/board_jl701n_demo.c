@@ -60,22 +60,22 @@ void board_power_init(void);
 
 /*各个状态下默认的闪灯方式和提示音设置，如果USER_CFG中设置了USE_CONFIG_STATUS_SETTING为1，则会从配置文件读取对应的配置来填充改结构体*/
 STATUS_CONFIG status_config = {
-    //灯状态设置
+    //灯状态设置    // led0: blue led1:red
     .led = {
-        .charge_start  = PWM_LED1_ON,
-        .charge_full   = PWM_LED0_ON,
-        .power_on      = PWM_LED0_ON,
-        .power_off     = PWM_LED1_FLASH_THREE,
-        .lowpower      = PWM_LED1_SLOW_FLASH,
+        .charge_start  = PWM_LED0_BREATHE,
+        .charge_full   = PWM_ONE_LED_BRIGHT_5S,     // 需要重新做
+        .power_on      = PWM_ONE_LED_BRIGHT_1S,     // 需要重新做
+        .power_off     = PWM_ONE_LED_BRIGHT_3S,     // 需要重新做
+        .lowpower      = PWM_LED1_ONE_FLASH_3S,
         .max_vol       = PWM_LED_NULL,
         .phone_in      = PWM_LED_NULL,
         .phone_out     = PWM_LED_NULL,
         .phone_activ   = PWM_LED_NULL,
-        .bt_init_ok    = PWM_LED0_LED1_SLOW_FLASH,
-        .bt_connect_ok = PWM_LED0_ONE_FLASH_5S,
-        .bt_disconnect = PWM_LED0_LED1_FAST_FLASH,
-        .tws_connect_ok = PWM_LED0_LED1_FAST_FLASH,
-        .tws_disconnect = PWM_LED0_LED1_SLOW_FLASH,
+        .bt_init_ok    = PWM_LED_NULL,
+        .bt_connect_ok = PWM_LED_ALL_OFF,
+        .bt_disconnect = PWM_LED0_SLOW_FLASH,
+        .tws_connect_ok = PWM_LED0_SLOW_FLASH,
+        .tws_disconnect = PWM_LED_NULL,
     },
     //提示音设置
     .tone = {

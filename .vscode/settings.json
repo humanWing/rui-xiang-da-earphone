@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "board_config.h": "c",
+        "board_jl701n_demo_cfg.h": "c",
+        "power_wakeup.h": "c",
+        "ldoin_commu.h": "c"
+    }
+
+}

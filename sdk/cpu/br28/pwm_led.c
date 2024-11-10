@@ -1174,6 +1174,9 @@ static void _pwm_led_display_mode(u8 display)
     case PWM_LED1_ONE_FLASH_5S:
         _pwm_led_one_flash_display(1, CFG_LED0_LIGHT, CFG_LED1_LIGHT, 5000, 10, CFG_LED_5S_FLASH_LIGHT_TIME);
         break;
+    case PWM_LED1_ONE_FLASH_3S:
+        _pwm_led_one_flash_display(1, CFG_LED0_LIGHT, CFG_LED1_LIGHT, 3000, 10, CFG_LED_5S_FLASH_LIGHT_TIME);
+        break;
 //单灯双闪
     case PWM_LED0_DOUBLE_FLASH_5S:
         _pwm_led_double_flash_display(0, CFG_LED0_LIGHT, CFG_LED1_LIGHT, 5000, 100, 200, 100);
