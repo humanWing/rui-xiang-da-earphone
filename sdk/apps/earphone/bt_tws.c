@@ -65,19 +65,20 @@
 #define    CONFIG_BT_TWS_SNIFF                  1       //[WIP]
 #endif
 
-#define    BT_TWS_UNPAIRED                      0x0001
-#define    BT_TWS_PAIRED                        0x0002
-#define    BT_TWS_WAIT_SIBLING_SEARCH           0x0004
-#define    BT_TWS_SEARCH_SIBLING                0x0008
-#define    BT_TWS_CONNECT_SIBLING               0x0010
-#define    BT_TWS_SIBLING_CONNECTED             0x0020
-#define    BT_TWS_PHONE_CONNECTED               0x0040
-#define    BT_TWS_POWER_ON                      0x0080
-#define    BT_TWS_TIMEOUT                       0x0100
-#define    BT_TWS_AUDIO_PLAYING                 0x0200
-#define    BT_TWS_DISCON_DLY_TIMEOUT            0x0400
-#define    BT_TWS_REMOVE_PAIRS                  0x0800
-#define    BT_TWS_DISCON_DLY_TIMEOUT_NO_CONN    0x1000
+#define    BT_TWS_UNPAIRED                      0x0001  // 未配对状态，耳机尚未与任何设备连接
+#define    BT_TWS_PAIRED                        0x0002  // 已配对状态，耳机与设备成功配对，但未连接
+#define    BT_TWS_WAIT_SIBLING_SEARCH           0x0004  // 等待搜索另一只耳机的状态
+#define    BT_TWS_SEARCH_SIBLING                0x0008  // 正在搜索另一只耳机
+#define    BT_TWS_CONNECT_SIBLING               0x0010  // 正在连接另一只耳机
+#define    BT_TWS_SIBLING_CONNECTED             0x0020  // 另一只耳机已成功连接
+#define    BT_TWS_PHONE_CONNECTED               0x0040  // 与手机或主设备连接状态
+#define    BT_TWS_POWER_ON                      0x0080  // 耳机已开机
+#define    BT_TWS_TIMEOUT                       0x0100  // 连接超时状态
+#define    BT_TWS_AUDIO_PLAYING                 0x0200  // 音频正在播放状态
+#define    BT_TWS_DISCON_DLY_TIMEOUT            0x0400  // 断开延迟超时状态
+#define    BT_TWS_REMOVE_PAIRS                  0x0800  // 移除配对状态
+#define    BT_TWS_DISCON_DLY_TIMEOUT_NO_CONN    0x1000  // 无连接的断开延迟超时状态
+
 
 #define TWS_DLY_DISCONN_TIME   2000//超时断开，快速连接上不播提示音
 struct tws_user_var {
@@ -427,7 +428,7 @@ int bt_tws_sync_phone_num(void *priv)
 static void bt_tws_delete_pair_timer()
 {
     if (gtws.pair_timer) {
-        sys_timeout_del(gtws.pair_timer);
+                sys_timeout_del(gtws.pair_timer);
         gtws.pair_timer = 0;
     }
 }
@@ -510,6 +511,7 @@ static void connect_and_connectable_switch(void *_sw)
     if (sw == 0) {
 __again:
         if (bt_user_priv_var.auto_connection_counter > 0) {
+            // 回连手机
             if (gtws.state & BT_TWS_SIBLING_CONNECTED) {
                 timeout = 8000;
             } else {
@@ -533,6 +535,7 @@ __again:
                 /*
                  * 开机回连,获取下一个设备地址
                  */
+                // 获取是否有手机mac地址 1:have
                 if (get_current_poweron_memory_search_index(NULL)) {
                     bt_init_ok_search_index();
                     goto __again;
@@ -541,7 +544,11 @@ __again:
             }
 
             if (gtws.state & BT_TWS_SIBLING_CONNECTED) {
-                tws_api_wait_pair_by_code(bt_get_tws_device_indicate(NULL), bt_get_local_name(), 0);
+                //TODO这里做耳机是否可以被手机发现，如果没有手机连接地址的话，开可发现，否则不开
+                if (get_current_poweron_memory_search_index(NULL) == 0)
+                {
+                    tws_api_wait_pair_by_code(bt_get_tws_device_indicate(NULL), bt_get_local_name(), 0);
+                }
 
                 tws_sniff_controle_check_enable();
                 return;
@@ -559,7 +566,9 @@ __again:
     if (sw == 1) {
         tws_api_wait_pair_by_code(bt_get_tws_device_indicate(NULL), bt_get_local_name(), 0);
         if (!(gtws.state & BT_TWS_SIBLING_CONNECTED)) {
+            // 与另外一个耳机没有连接
             if (!(gtws.state & BT_TWS_UNPAIRED)) {
+                // 已配对
 #ifdef CONFIG_TWS_AUTO_PAIR_WITHOUT_UNPAIR
                 end_sw = 2;
 #endif
@@ -606,7 +615,7 @@ __set_time:
         sw = 0;
     }
 
-    gtws.pair_timer = sys_timeout_add((void *)sw, connect_and_connectable_switch, timeout);
+        gtws.pair_timer = sys_timeout_add((void *)sw, connect_and_connectable_switch, timeout);
 }
 
 #else
@@ -789,6 +798,7 @@ int bt_tws_start_search_sibling()
 /*
  * 自动配对状态定时切换函数
  */
+// no run
 static void __bt_tws_auto_pair_switch(void *priv)
 {
     u32 timeout;
@@ -821,6 +831,7 @@ static void __bt_tws_auto_pair_switch(void *priv)
     gtws.pair_timer = sys_timeout_add((void *)sw, __bt_tws_auto_pair_switch, timeout);
 }
 
+// no run
 static void bt_tws_auto_pair_switch(int timeout)
 {
     bt_tws_delete_pair_timer();
@@ -876,6 +887,7 @@ static u8 set_channel_by_code_or_res(void)
     syscfg_read(CFG_CHARGESTORE_TWS_CHANNEL, &channel, 1);
 #endif
 
+    log_info("channel: %d\n", channel);
     if (channel) {
         syscfg_read(CFG_TWS_CHANNEL, &last_channel, 1);
         if (channel != last_channel) {
@@ -906,6 +918,7 @@ int bt_tws_poweron()
     }
 #endif
 
+// no run
 #if TCFG_AUDIO_ANC_ENABLE
     /*支持ANC训练快速连接，不连接tws*/
 #if TCFG_ANC_BOX_ENABLE
@@ -929,6 +942,7 @@ int bt_tws_poweron()
     gtws.state = BT_TWS_POWER_ON;
     gtws.connect_time = 0;
 
+// 经典蓝牙等待12s
     lmp_hci_write_page_timeout(12000);
 #ifdef CONFIG_A2DP_GAME_MODE_ENABLE
     extern void bt_set_low_latency_mode(int enable);
@@ -938,6 +952,7 @@ int bt_tws_poweron()
 #endif
 
     int result = 0;
+    ui_update_status(STATUS_BT_TWS_START);
     err = tws_get_sibling_addr(addr, &result);
     if (err == 0) {
         /*
@@ -969,10 +984,11 @@ int bt_tws_poweron()
             }
             tws_api_set_quick_connect_addr(addr);
 #endif
-            bt_tws_connect_sibling(CONFIG_TWS_CONNECT_SIBLING_TIMEOUT);
+            bt_tws_connect_sibling(CONFIG_TWS_CONNECT_POWERON_TIMEOUT);
         }
 
     } else {
+        //// INFO 没有tws 信息
         printf("\n ---------no tws info----------\n");
 
         EARPHONE_STATE_TWS_INIT(0);
@@ -1518,7 +1534,7 @@ int bt_tws_connction_status_event_handler(struct bt_event *evt)
         if (channel != bt_tws_get_local_channel()) {
             syscfg_write(CFG_TWS_CHANNEL, &channel, 1);
         }
-        r_printf("tws_local_channel: %c\n", channel);
+        log_info("tws_local_channel: %c\n", channel);
 
         EARPHONE_STATE_TWS_CONNECTED(pair_suss, addr[3]);
 
@@ -1650,6 +1666,8 @@ int bt_tws_connction_status_event_handler(struct bt_event *evt)
         /*
          * 发起配对超时, 等待手机连接
          */
+        log_info("TWS_EVENT_SEARCH_TIMEOUT\n");
+
         gtws.state &= ~BT_TWS_SEARCH_SIBLING;
 #if CONFIG_TWS_PAIR_MODE == CONFIG_TWS_PAIR_BY_CLICK
         tws_api_set_local_channel(bt_tws_get_local_channel());

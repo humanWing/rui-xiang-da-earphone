@@ -219,9 +219,11 @@
 //*********************************************************************************//
 //                                 对耳配置方式配置                                    //
 //*********************************************************************************//
-#define CONFIG_TWS_CONNECT_SIBLING_TIMEOUT    4    /* 开机或超时断开后对耳互连超时时间，单位s */
+#define CONFIG_TWS_CONNECT_SIBLING_TIMEOUT    60    /* 断开后对耳互连超时时间，单位s */
+#define CONFIG_TWS_CONNECT_POWERON_TIMEOUT    20    /* 开机对耳互连超时时间，单位s */
+
 // #define CONFIG_TWS_REMOVE_PAIR_ENABLE              [> 不连手机的情况下双击按键删除配对信息 <]
-#define CONFIG_TWS_POWEROFF_SAME_TIME         1    /*按键关机时两个耳机同时关机*/
+#define CONFIG_TWS_POWEROFF_SAME_TIME         0    /*按键关机时两个耳机同时关机*/
 
 #define ONE_KEY_CTL_DIFF_FUNC                 1    /*通过左右耳实现一个按键控制两个功能*/
 #define CONFIG_TWS_SCO_ONLY_MASTER			  0	   /*通话的时候只有主机出声音*/
