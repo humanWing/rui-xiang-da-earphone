@@ -768,7 +768,7 @@ DAC硬件上的连接方式,可选的配置：
 /*充电截止电流可选配置*/
 #define TCFG_CHARGE_FULL_MA					CHARGE_FULL_mA_5
 /*恒流充电电流可选配置*/
-#define TCFG_CHARGE_MA						CHARGE_mA_50
+#define TCFG_CHARGE_MA						CHARGE_mA_30
 /*涓流充电电流配置*/
 #define TCFG_CHARGE_TRICKLE_MA              CHARGE_mA_10
 
