@@ -128,6 +128,31 @@ void __set_sbc_cap_bitpool(u8 sbc_cap_bitpoola);
 
 
 static u16 power_mode_timer = 0;
+static u8 phone_answer_setup_esco=0;
+static u32 active_time=0;
+void app_ear_detect_phone_active_deal()
+{
+    if (get_remote_dev_company() == 2) {    ////IOS就处理
+        printf("ios, phone active, esco:%d", bt_phone_dec_is_running());
+        if (bt_phone_dec_is_running()) { //esco还没关闭，等关闭时再打开
+            phone_answer_setup_esco = 1;
+            active_time = jiffies_msec();
+        } else { //esco已经关闭，建立连接
+            user_send_cmd_prepare(USER_CTRL_CONN_SCO, 0, NULL);
+        }
+    }
+}
+void waiting_esco_timerout(void)
+{
+    if(phone_answer_setup_esco){
+        phone_answer_setup_esco =0;
+        if((jiffies_msec() - active_time) < 1000){
+            active_time = 0;
+            printf("active_time = 0;\n");
+            user_send_cmd_prepare(USER_CTRL_CONN_SCO, 0, NULL);
+        }
+    }
+}
 
 u8 init_ok = 0;
 u8 get_bt_init_status(void)
@@ -1674,7 +1699,7 @@ static int bt_connction_status_event_handler(struct bt_event *bt)
         ear_detect_call_chg_master_deal();
 #endif //TCFG_EAR_DETECT_AUTO_CHG_MASTER
 #endif // TCFG_EAR_DETECT_ENABLE
-
+        app_ear_detect_phone_active_deal();
         break;
     case BT_STATUS_PHONE_HANGUP:
         esco_dump_packet = ESCO_DUMP_PACKET_CALL;
@@ -1806,6 +1831,7 @@ static int bt_connction_status_event_handler(struct bt_event *bt)
             {
                 clk_set_sys_lock(BT_NORMAL_HZ, 2);
             }
+            waiting_esco_timerout();
         }
         break;
     case BT_STATUS_CALL_VOL_CHANGE:
