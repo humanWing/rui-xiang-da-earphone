@@ -187,7 +187,16 @@ void pbg_user_ear_pos_sync(u8 left, u8 right)
 
 bool pbg_user_key_vaild(u8 *key_msg, struct sys_event *event)
 {
-    //add code
+    extern u8 key_table[KEY_NUM_MAX][KEY_EVENT_MAX];
+    struct key_event *key = &event->u.key;
+    
+    if (((u32)event->arg == SYS_BT_EVENT_FROM_TWS)
+        && (KEY_VOL_UP == key_table[key->value][key->event]))
+    {
+        *key_msg = KEY_NULL;
+        return true;
+    }
+
     return false;
 }
 
