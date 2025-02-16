@@ -183,7 +183,7 @@ void check_power_on_key(void)
         if (get_power_on_status()) {
             log_info("+");
             delay_10ms_cnt++;
-            if (delay_10ms_cnt > 70) {
+            if (delay_10ms_cnt > 200) {
                 /* extern void set_key_poweron_flag(u8 flag); */
                 /* set_key_poweron_flag(1); */
                 return;
