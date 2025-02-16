@@ -2154,6 +2154,36 @@ static void play_tone_at_same_time(int tone_name, int err)
         anc_tone_sync_play(tone_name);
         break;
 #endif
+    case SYNC_TONE_HEARING_LOW_MOD:
+    case SYNC_TONE_HEARING_MID_MOD:
+    case SYNC_TONE_HEARING_HIGH_MOD:
+        extern float realhear_mode_noise_value;
+        #define REALHEAR_MODE_NOISE_LEVEL1  (1)
+        #define REALHEAR_MODE_NOISE_LEVEL2  (12)
+        #define REALHEAR_MODE_NOISE_LEVEL3  (30)
+
+        log_info("heating mode setting\n");
+        audio_hearing_aid_suspend();
+        if (tone_name == SYNC_TONE_HEARING_LOW_MOD)
+        {
+            realhear_mode_noise_value = REALHEAR_MODE_NOISE_LEVEL1;
+            tone_play_index(p_tone->hearing_aid_low_ns, 1);
+        }
+        else if (tone_name == SYNC_TONE_HEARING_MID_MOD)
+        {
+            realhear_mode_noise_value = REALHEAR_MODE_NOISE_LEVEL2;
+            tone_play_index(p_tone->hearing_aid_mid_ns, 1);
+        }
+        else
+        {
+            realhear_mode_noise_value = REALHEAR_MODE_NOISE_LEVEL3;
+            tone_play_index(p_tone->hearing_aid_hight_ns, 1);
+        }
+        audio_hearing_aid_resume();
+        break;
+    case SYNC_TONE_HEARING_AID_MAX_VOL:
+        tone_play_index(p_tone->max_vol, 0);
+        break;
 #if TCFG_AUDIO_HEARING_AID_ENABLE
     case SYNC_TONE_HEARING_AID_OPEN:
         extern int audio_hearing_aid_open(void);
