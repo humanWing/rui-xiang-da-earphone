@@ -221,7 +221,7 @@ static void app_poweron_check(int update)
 
 #if TCFG_CHARGE_OFF_POWERON_NE
     if (is_ldo5v_wakeup()) {
-        app_var.play_poweron_tone = 0;
+        app_var.play_poweron_tone = 1;
         return;
     }
 #endif
