@@ -1512,6 +1512,9 @@
 		<Unit filename="cpu/br28/irflt.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="cpu/br28/ldoin_commu.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="cpu/br28/lp_touch_key.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -2022,6 +2025,9 @@
 		<Unit filename="include_lib/update/update_loader_download.h" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
+			<code_completion />
+			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

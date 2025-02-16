@@ -62,11 +62,15 @@
                 "CONFIG_ITEM_FORMAT_VM",
                 "CONFIG_BOARD_JL701N_DEMO",
                 "TCFG_USER_TWS_ENABLE",
-                "TCFG_CHARGE_ENABLE"
+                "TCFG_CHARGE_ENABLE",
+                "TCFG_SYS_LVD_EN",
+                "TCFG_TEST_BOX_ENABLE",
+                // "CONFIG_TWS_PAIR_MODE=0"
             ],
             "includePath": [
                 "${workspaceFolder}/sdk/apps/earphone/board/br28/",
-                "${workspaceFolder}/sdk/apps/earphone/board/br28/board_jl701n_demo_cfg.h"
+                "${workspaceFolder}sdk/apps/earphone/include/"
+
                 // "${workspaceFolder}/include_lib/driver",
                 // "${workspaceFolder}/include_lib/driver/device",
                 // "${workspaceFolder}/include_lib/driver/cpu/br23",

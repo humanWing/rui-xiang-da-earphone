@@ -94,6 +94,7 @@ struct tws_user_var {
 
 struct tws_user_var  gtws;
 
+extern u8 factory_pro_flag;
 extern void tone_play_deal(const char *name, u8 preemption, u8 add_en);
 
 extern u8 check_tws_le_aa(void);
@@ -196,8 +197,8 @@ u16 tws_host_get_battery_voltage()
 
 int tws_host_channel_match(char remote_channel)
 {
-    /*r_printf("tws_host_channel_match: %c, %c\n", remote_channel,
-             bt_tws_get_local_channel());*/
+    printf("tws_host_channel_match: %c, %c\n", remote_channel,
+             bt_tws_get_local_channel());
 #ifdef CONFIG_NEW_BREDR_ENABLE
 #if CONFIG_TWS_CHANNEL_SELECT == CONFIG_TWS_LEFT_START_PAIR || \
     CONFIG_TWS_CHANNEL_SELECT == CONFIG_TWS_RIGHT_START_PAIR || \
@@ -246,7 +247,7 @@ char tws_host_get_local_channel()
     if (channel != 'R') {
         channel = 'L';
     }
-    /*y_printf("tws_host_get_local_channel: %c\n", channel);*/
+    y_printf("tws_host_get_local_channel: %c\n", channel);
 
     return channel;
 }
@@ -605,7 +606,7 @@ __again:
         else
         {
             // log_info("switch: ppp1\n");
-        tws_api_wait_pair_by_code(bt_get_tws_device_indicate(NULL), bt_get_local_name(), 0);
+            tws_api_wait_pair_by_code(bt_get_tws_device_indicate(NULL), bt_get_local_name(), 0);
         }
 
         if (!(gtws.state & BT_TWS_SIBLING_CONNECTED)) {
@@ -818,7 +819,7 @@ int bt_tws_start_search_sibling()
 #endif
         return 0;
     }
-
+    
     if (check_tws_le_aa()) {
         return 0;
     }
@@ -1002,6 +1003,12 @@ int bt_tws_poweron()
          * 获取到对方地址, 开始连接
          */
         printf("\n ---------have tws info----------\n");
+
+        if (factory_pro_flag == 0)
+        {
+            ui_update_status(STATUS_BT_TWS_START_HAVE_INFO);
+        }
+
         gtws.state |= BT_TWS_PAIRED;
 
         EARPHONE_STATE_TWS_INIT(1);
@@ -1033,6 +1040,11 @@ int bt_tws_poweron()
     } else {
         //// INFO 没有tws 信息
         printf("\n ---------no tws info----------\n");
+
+        if (factory_pro_flag == 0)
+        {
+            ui_update_status(STATUS_BT_TWS_START);
+        }
 
         EARPHONE_STATE_TWS_INIT(0);
 
@@ -1197,7 +1209,7 @@ void bt_tws_phone_page_timeout()
 
 void bt_tws_phone_connect_timeout()
 {
-    log_d("bt_tws_phone_connect_timeout: %x, %d\n", gtws.state, gtws.pair_timer);
+    log_info("bt_tws_phone_connect_timeout: %x, %d\n", gtws.state, gtws.pair_timer);
 
     gtws.state &= ~BT_TWS_PHONE_CONNECTED;
 
@@ -1713,6 +1725,13 @@ int bt_tws_connction_status_event_handler(struct bt_event *evt)
             sys_timeout_del(gtws.tws_dly_discon_time);
             gtws.tws_dly_discon_time = 0;
         }
+
+        if (factory_pro_flag)
+        {
+            factory_pro_flag = 0;
+            cpu_reset();
+        }
+
         break;
 
     case TWS_EVENT_SEARCH_TIMEOUT:
@@ -1728,6 +1747,13 @@ int bt_tws_connction_status_event_handler(struct bt_event *evt)
 #endif
         bt_tws_connect_and_connectable_switch();
         pbg_user_set_tws_state(0);
+
+        if (factory_pro_flag)
+        {
+            factory_pro_flag = 0;
+            cpu_reset();
+        }
+
         break;
     case TWS_EVENT_CONNECTION_TIMEOUT:
         /*
@@ -1764,11 +1790,23 @@ int bt_tws_connction_status_event_handler(struct bt_event *evt)
                 bt_tws_connect_and_connectable_switch();
             }
         }
+
+        if (factory_pro_flag)
+        {
+            factory_pro_flag = 0;
+            cpu_reset();
+        }
         break;
     case TWS_EVENT_CONNECTION_DETACH:
         /*
          * TWS连接断开
          */
+        if (factory_pro_flag)
+        {
+            factory_pro_flag = 0;
+            cpu_reset();
+        }
+
         if (app_var.goto_poweroff_flag) {
             break;
         }
@@ -1947,6 +1985,8 @@ int bt_tws_connction_status_event_handler(struct bt_event *evt)
             extern void sys_enter_soft_poweroff(void *priv);
             sys_enter_soft_poweroff((void *)3);
         } else if (reason == SYNC_CMD_SHUT_DOWN_TIME) {
+            // 回连超时会跑这里
+            ui_update_status(STATUS_BT_CON_TIMEOUT);
             r_printf(" SYNC_CMD_SHUT_DOWN_TIME");
             sys_auto_shut_down_disable();
             sys_auto_shut_down_enable();
@@ -2021,6 +2061,7 @@ static void play_tone_at_same_time(int tone_name, int err)
     STATUS *p_tone = get_tone_config();
     int state;
 
+    log_info("tws_sync_tone %d err%d\n", tone_name, err);
     switch (tone_name) {
 #if TCFG_EAR_DETECT_ENABLE
     case SYNC_TONE_EARDET_IN:
@@ -2048,7 +2089,7 @@ static void play_tone_at_same_time(int tone_name, int err)
         if (!app_var.goto_poweroff_flag) {
             tone_play_index(p_tone->bt_disconnect, 1);
         }
-        ui_update_status(STATUS_BT_TWS_CONN);
+        ui_update_status(STATUS_BT_DISCONN);
         break;
     case SYNC_TONE_MAX_VOL:
 #if TCFG_MAX_VOL_PROMPT
@@ -2148,6 +2189,8 @@ void bt_tws_play_tone_at_same_time(int tone_name, int msec)
  */
 static void led_state_sync_handler(int state, int err)
 {
+    log_info("tws_sync_led %d err%d\n", state, err);
+
     switch (state) {
     case SYNC_LED_STA_TWS_CONN:
         pwm_led_mode_set(PWM_LED_ALL_OFF);

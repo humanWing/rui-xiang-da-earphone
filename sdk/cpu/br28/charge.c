@@ -282,6 +282,7 @@ static void charge_full_detect(void *priv)
     }
 }
 
+extern u8 chargestore_get_comm_busy_flag(void);
 static void ldo5v_detect(void *priv)
 {
     /* log_info("%s\n",__func__); */
@@ -290,7 +291,7 @@ static void ldo5v_detect(void *priv)
     static u16 ldo5v_keep_cnt = 0;
     static u16 ldo5v_off_cnt = 0;
 
-    if (__this->detect_stop) {
+    if (__this->detect_stop || chargestore_get_comm_busy_flag()) {
         return;
     }
 

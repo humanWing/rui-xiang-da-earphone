@@ -61,7 +61,7 @@ void board_power_init(void);
 /*各个状态下默认的闪灯方式和提示音设置，如果USER_CFG中设置了USE_CONFIG_STATUS_SETTING为1，则会从配置文件读取对应的配置来填充改结构体*/
 STATUS_CONFIG status_config = {
     //灯状态设置    // led0: blue led1:red
-    .led = {
+        .led = {
         .charge_start  = PWM_LED0_BREATHE,
         .charge_full   = PWM_ONE_LED_BRIGHT_5S,     // 需要重新做
         .power_on      = PWM_ONE_LED_BRIGHT_1S,     // 需要重新做
@@ -174,8 +174,8 @@ CHARGE_PLATFORM_DATA_BEGIN(charge_data)
 /*ldo5v拔出过滤值，过滤时间 = (filter*2 + 20)ms,ldoin<0.6V且时间大于过滤时间才认为拔出
  对于充满直接从5V掉到0V的充电仓，该值必须设置成0，对于充满由5V先掉到0V之后再升压到xV的
  充电仓，需要根据实际情况设置该值大小*/
-	.ldo5v_off_filter		= 100,
-    .ldo5v_on_filter        = 50,
+	.ldo5v_off_filter		= 1000,
+    .ldo5v_on_filter        = 1000,
     .ldo5v_keep_filter      = 220,
     .ldo5v_pulldown_lvl     = CHARGE_PULLDOWN_200K,            //下拉电阻档位选择
     .ldo5v_pulldown_keep    = 0,
@@ -787,7 +787,7 @@ struct port_wakeup vbat_port = {
 
 struct port_wakeup ldoin_port = {
     .edge               = BOTH_EDGE,                      //唤醒方式选择,可选：上升沿\下降沿\双边沿
-    .filter             = PORT_FLT_4ms,
+    .filter             = PORT_FLT_NULL,
     .iomap              = IO_LDOIN_DET,                      //唤醒口选择
 };
 #endif
@@ -1078,6 +1078,8 @@ static void port_wakeup_callback(u8 index, u8 gpio)
     }
 }
 
+extern void ldoin_isr_user_comm_deal(u8 index, u8 gpio, u8 edge);
+
 static void aport_wakeup_callback(u8 index, u8 gpio, u8 edge)
 {
     /* log_info("%s:%d,%d",__FUNCTION__,index,gpio); */
@@ -1086,13 +1088,16 @@ static void aport_wakeup_callback(u8 index, u8 gpio, u8 edge)
         case IO_CHGFL_DET://charge port
             charge_wakeup_isr();
             break;
+        //// info 充点仓高低电平检测数据
         case IO_VBTCH_DET://vbat port
         case IO_LDOIN_DET://ldoin port
+            ldoin_isr_user_comm_deal(index, gpio, edge);
             ldoin_wakeup_isr();
             break;
     }
 #endif
 }
+extern void user_comm_init(void);
 
 void board_power_init(void)
 {
@@ -1108,6 +1113,8 @@ void board_power_init(void)
 #endif
 
     power_keep_dacvdd_en(0);
+    
+    user_comm_init();
 
 	power_wakeup_init(&wk_param);
 

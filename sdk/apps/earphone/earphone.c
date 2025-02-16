@@ -1405,6 +1405,8 @@ extern void tws_page_scan_deal_by_esco(u8 esco_flag);
  * 对应原来的状态处理函数，连接，电话状态等
  */
 void tws_conn_switch_role();
+
+extern u8 factory_pro_flag;
 static int bt_connction_status_event_handler(struct bt_event *bt)
 {
     STATUS *p_tone = get_tone_config();
@@ -1469,9 +1471,26 @@ static int bt_connction_status_event_handler(struct bt_event *bt)
         emitter_or_receiver_switch(BT_EMITTER_EN);
         break;
 #endif
+        if (factory_pro_flag)
+        {
+            //// 恢复出厂设置led
+        #if TCFG_USER_TWS_ENABLE
+            bt_tws_remove_pairs();
+        #endif
+            user_send_cmd_prepare(USER_CTRL_DEL_ALL_REMOTE_INFO, 0, NULL);
+            bt_user_priv_var.auto_connection_counter = 0;
 
-        bt_init_ok_search_index();
-        ui_update_status(STATUS_BT_INIT_OK);
+            extern u8 wdrc_mode_index;
+            wdrc_mode_index = 16;
+            syscfg_write(CFG_USER_DEFINE_HEARING_VOL, &wdrc_mode_index, 1);
+
+            ui_update_status(STATUS_RECOVER_FACTORY);
+        }
+        else
+        {
+            bt_init_ok_search_index();
+            ui_update_status(STATUS_BT_INIT_OK);
+        }
 #if TCFG_CHARGESTORE_ENABLE
         chargestore_set_bt_init_ok(1);
 #endif
@@ -1495,8 +1514,14 @@ static int bt_connction_status_event_handler(struct bt_event *bt)
 #endif
 
         /*if (app_var.play_poweron_tone) {
-            tone_play_index(p_tone->power_on, 1);
+        tone_play_index(p_tone->power_on, 1);
         }*/
+
+        if (!factory_pro_flag)
+        {
+            extern void hearing_aid_moed_start(void);
+            hearing_aid_moed_start();
+        }
         break;
 
     case BT_STATUS_SECOND_CONNECTED:
@@ -2120,7 +2145,7 @@ static void bt_hci_event_page_timeout()
 
     bt_wait_phone_connect_control(1);
 #endif
-    ui_update_status(STATUS_BT_CON_TIMEOUT);
+    // ui_update_status(STATUS_BT_CON_TIMEOUT);
 }
 
 static void bt_hci_event_connection_timeout(struct bt_event *bt)
@@ -2138,7 +2163,7 @@ static void bt_hci_event_connection_timeout(struct bt_event *bt)
         bt_user_priv_var.auto_connection_counter = (TIMEOUT_CONN_TIME * 1000);
         memcpy(bt_user_priv_var.auto_connection_addr, bt->args, 6);
 #if TCFG_USER_TWS_ENABLE
-        bt_tws_phone_connect_timeout();
+                bt_tws_phone_connect_timeout();
 #else
 
 #if ((CONFIG_BT_MODE == BT_BQB)||(CONFIG_BT_MODE == BT_PER))
@@ -2168,7 +2193,7 @@ static void bt_hci_event_connection_timeout(struct bt_event *bt)
 
 static void bt_hci_event_connection_exist(struct bt_event *bt)
 {
-
+    
     if (!get_remote_test_flag() && !get_esco_busy_flag()) {
         bt_user_priv_var.auto_connection_counter = (8 * 1000);
         memcpy(bt_user_priv_var.auto_connection_addr, bt->args, 6);
@@ -2495,6 +2520,10 @@ static int event_handler(struct application *app, struct sys_event *event)
             app_chargestore_event_handler(&event->u.chargestore);
         }
 #endif
+        extern int user_chargestore_event_handler(struct chargestore_event *chargestore_dev);
+        if ((u32)event->arg == DEVICE_EVENT_CHARGE_STORE) {
+            user_chargestore_event_handler(&event->u.chargestore);
+        }
 #if TCFG_UMIDIGI_BOX_ENABLE
         else if ((u32)event->arg == DEVICE_EVENT_UMIDIGI_CHARGE_STORE) {
             app_umidigi_chargestore_event_handler(&event->u.umidigi_chargestore);

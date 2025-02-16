@@ -90,6 +90,8 @@ static u8 idle_key_table[KEY_NUM_MAX][KEY_EVENT_MAX] = {
     //SHORT      LONG                   HOLD                        UP                       DOUBLE    TRIPLE
     {KEY_NULL,   KEY_CLEAN_PHONE_INFO,  KEY_CLEAN_PHONE_INFO_HOLD,  KEY_CLEAN_PHONE_INFO_UP, KEY_NULL, KEY_NULL},   //KEY_0
 };
+#include "avctp_user.h"
+
 int app_idle_key_event_handler(struct sys_event *event)
 {
     int ret = false;
@@ -110,9 +112,17 @@ int app_idle_key_event_handler(struct sys_event *event)
         if (key_press_flag) {
             if (key_hold_cnt == IDLE_CLEAN_INFO_CNT) {
                 log_info("KEY_CLEAN_PHONE_INFO_HOLD");
-                extern void delete_link_key_for_app(bd_addr_t *bd_addr, u8 id);
-                delete_link_key_for_app(NULL, 0);
-                tone_play(TONE_SIN_NORMAL, 1);
+                // extern void delete_link_key_for_app(bd_addr_t *bd_addr, u8 id);
+                // delete_link_key_for_app(NULL, 0);
+                struct application *app = get_current_app();
+                extern u8 factory_pro_flag;
+
+                if (app && strcmp(app->name, APP_NAME_BT)/*  && (app_var.goto_poweroff_flag == 0) */)
+                {
+                    factory_pro_flag = 1;
+                    power_set_mode(TCFG_LOWPOWER_POWER_SEL);
+                    task_switch_to_bt();
+                }
                 key_press_flag = 0;
             }
         }
@@ -154,6 +164,10 @@ static int idle_event_handler(struct application *app, struct sys_event *event)
             app_chargestore_event_handler(&event->u.chargestore);
         }
 #endif
+        extern int user_chargestore_event_handler(struct chargestore_event *chargestore_dev);
+        if ((u32)event->arg == DEVICE_EVENT_CHARGE_STORE) {
+            user_chargestore_event_handler(&event->u.chargestore);
+        }
 #if TCFG_UMIDIGI_BOX_ENABLE
         else if ((u32)event->arg == DEVICE_EVENT_UMIDIGI_CHARGE_STORE) {
             app_umidigi_chargestore_event_handler(&event->u.umidigi_chargestore);
