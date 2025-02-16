@@ -220,7 +220,7 @@
 //                                 对耳配置方式配置                                    //
 //*********************************************************************************//
 #define CONFIG_TWS_CONNECT_SIBLING_TIMEOUT    60    /* 断开后对耳互连超时时间，单位s */
-#define CONFIG_TWS_CONNECT_POWERON_TIMEOUT    20    /* 开机对耳互连超时时间，单位s */
+#define CONFIG_TWS_CONNECT_POWERON_TIMEOUT    15    /* 开机对耳互连超时时间，单位s */
 
 // #define CONFIG_TWS_REMOVE_PAIR_ENABLE              [> 不连手机的情况下双击按键删除配对信息 <]
 #define CONFIG_TWS_POWEROFF_SAME_TIME         0    /*按键关机时两个耳机同时关机*/
@@ -244,7 +244,15 @@
 #define CONFIG_TWS_EXTERN_UP_AS_LEFT          5 //外部有上拉电阻作为左耳
 #define CONFIG_TWS_EXTERN_DOWN_AS_LEFT        6 //外部有下拉电阻作为左耳
 #define CONFIG_TWS_SECECT_BY_CHARGESTORE      7 //充电仓决定左右耳
-#define CONFIG_TWS_CHANNEL_SELECT             CONFIG_TWS_LEFT_START_PAIR //配对方式选择
+
+#define CONFIG_TWS_CHANNEL_SELECT             CONFIG_TWS_MASTER_AS_LEFT //配对方式选择
+
+
+// 左边的耳机
+// #define CONFIG_TWS_CHANNEL_SELECT             CONFIG_TWS_AS_LEFT_CHANNEL //配对方式选择
+
+// 右边的耳机
+// #define CONFIG_TWS_CHANNEL_SELECT             CONFIG_TWS_AS_RIGHT_CHANNEL //配对方式选择
 
 #define CONFIG_TWS_CHANNEL_CHECK_IO           IO_PORTA_07					//上下拉电阻检测引脚
 
