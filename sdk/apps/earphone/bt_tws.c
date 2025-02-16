@@ -449,7 +449,7 @@ static void bt_tws_search_sibling_and_pair()
     get_random_number(mac_addr, 6);
     lmp_hci_write_local_address(mac_addr);
 #endif
-    tws_api_search_sibling_by_code(bt_get_tws_device_indicate(NULL), 15000);
+    tws_api_search_sibling_by_code(bt_get_tws_device_indicate(NULL), 30000);
 }
 
 /*
@@ -497,6 +497,9 @@ static int bt_tws_connect_phone()
  *
  */
 #ifdef CONFIG_NEW_BREDR_ENABLE
+static u8 gu8_connet_phone_tone = 0;
+static u8 gu8_phone_con_test = 0;
+
 static void connect_and_connectable_switch(void *_sw)
 {
     int timeout = 0;
@@ -510,8 +513,19 @@ static void connect_and_connectable_switch(void *_sw)
 
     if (sw == 0) {
 __again:
+        log_info("switch: test1\n");
+
         if (bt_user_priv_var.auto_connection_counter > 0) {
             // 回连手机
+
+            gu8_phone_con_test = 1;
+            if (0 == gu8_connet_phone_tone)
+            {
+                gu8_connet_phone_tone = 1;
+                STATUS *p_tone = get_tone_config();
+                tone_play_index(p_tone->phone_pairing, 0);
+            }
+
             if (gtws.state & BT_TWS_SIBLING_CONNECTED) {
                 timeout = 8000;
             } else {
@@ -537,6 +551,8 @@ __again:
                  */
                 // 获取是否有手机mac地址 1:have
                 if (get_current_poweron_memory_search_index(NULL)) {
+
+                    log_info("switch: have phone info\n");
                     bt_init_ok_search_index();
                     goto __again;
                 }
@@ -545,14 +561,21 @@ __again:
 
             if (gtws.state & BT_TWS_SIBLING_CONNECTED) {
                 //TODO这里做耳机是否可以被手机发现，如果没有手机连接地址的话，开可发现，否则不开
-                if (get_current_poweron_memory_search_index(NULL) == 0)
+                if (gu8_phone_con_test == 0)
                 {
                     tws_api_wait_pair_by_code(bt_get_tws_device_indicate(NULL), bt_get_local_name(), 0);
+                }
+                else
+                {
+                   tws_api_cancle_wait_pair();
+                   user_send_cmd_prepare(USER_CTRL_WRITE_SCAN_DISABLE, 0, NULL);
+                   user_send_cmd_prepare(USER_CTRL_WRITE_CONN_ENABLE, 0, NULL);
                 }
 
                 tws_sniff_controle_check_enable();
                 return;
             }
+
 #if CONFIG_TWS_PAIR_MODE == CONFIG_TWS_PAIR_BY_CLICK
             if (gtws.state & BT_TWS_UNPAIRED) {
                 tws_api_wait_pair_by_code(bt_get_tws_device_indicate(NULL), bt_get_local_name(), 0);
@@ -563,8 +586,28 @@ __again:
         }
     }
 
+    log_info("switch: sw%d p%d\n", sw, gu8_phone_con_test);
+
+
     if (sw == 1) {
+        /* if ((bt_user_priv_var.auto_connection_counter <= 0) && gu8_phone_con_test)
+        {
+            user_send_cmd_prepare(USER_CTRL_WRITE_SCAN_DISABLE, 0, NULL);
+            user_send_cmd_prepare(USER_CTRL_WRITE_CONN_ENABLE, 0, NULL);
+            log_info("switch: ppp\n");
+        } */
+        if (gu8_phone_con_test)
+        {
+            tws_api_cancle_wait_pair();
+            user_send_cmd_prepare(USER_CTRL_WRITE_SCAN_DISABLE, 0, NULL);
+            user_send_cmd_prepare(USER_CTRL_WRITE_CONN_ENABLE, 0, NULL);
+        }
+        else
+        {
+            // log_info("switch: ppp1\n");
         tws_api_wait_pair_by_code(bt_get_tws_device_indicate(NULL), bt_get_local_name(), 0);
+        }
+
         if (!(gtws.state & BT_TWS_SIBLING_CONNECTED)) {
             // 与另外一个耳机没有连接
             if (!(gtws.state & BT_TWS_UNPAIRED)) {
@@ -614,6 +657,7 @@ __set_time:
     if (++sw > end_sw) {
         sw = 0;
     }
+    log_info("switch: start%d\n", sw);
 
         gtws.pair_timer = sys_timeout_add((void *)sw, connect_and_connectable_switch, timeout);
 }
@@ -952,7 +996,6 @@ int bt_tws_poweron()
 #endif
 
     int result = 0;
-    ui_update_status(STATUS_BT_TWS_START);
     err = tws_get_sibling_addr(addr, &result);
     if (err == 0) {
         /*
@@ -1022,10 +1065,16 @@ int bt_tws_poweron()
 
 #else
 #if CONFIG_TWS_PAIR_MODE == CONFIG_TWS_PAIR_BY_CLICK
-            if (result == VM_INDEX_ERR) {
+            if (result == VM_INDEX_ERR)
+            // if ((result == VM_INDEX_ERR) || (factory_pro_flag != 0))
+            {
+                // tws_api_set_quick_connect_addr(tws_set_auto_pair_code());
+                // bt_tws_connect_sibling(6);
+
                 printf("tws_get_sibling_addr index_err and bt_tws_start_search_sibling =%d\n", result);
                 bt_tws_start_search_sibling();
-            } else
+            }
+            else
 #endif
             {
                 /*
@@ -1035,6 +1084,10 @@ int bt_tws_poweron()
                 /*tws_api_create_connection(0);*/
                 /*bt_tws_search_sibling_and_pair();*/
 
+                // if (factory_pro_flag != 0)
+                {
+                    bt_tws_start_search_sibling();
+                }
             }
 #endif
         }
