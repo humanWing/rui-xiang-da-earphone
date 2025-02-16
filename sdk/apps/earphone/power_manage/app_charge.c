@@ -571,7 +571,7 @@ void charge_ldo5v_off_deal(void)
 #endif
 #if TCFG_CHARGE_OFF_POWERON_NE
             log_info("ldo5v off,task switch to BT\n");
-            app_var.play_poweron_tone = 0;
+            app_var.play_poweron_tone = 1;
 #if TCFG_SYS_LVD_EN
             vbat_check_init();
 #endif
@@ -614,7 +614,7 @@ void charge_ldo5v_off_deal(void)
         if (app && (!strcmp(app->name, APP_NAME_IDLE)) && (app_var.goto_poweroff_flag == 0)) {
 #if TCFG_CHARGE_OFF_POWERON_NE
             log_info("ldo5v off,task switch to BT\n");
-            app_var.play_poweron_tone = 0;
+            app_var.play_poweron_tone = 1;
 #if TCFG_SYS_LVD_EN
             vbat_check_init();
 #endif
