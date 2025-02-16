@@ -191,6 +191,18 @@ void cfg_file_parse(u8 idx)
 
     memset(tmp, 0x00, sizeof(tmp));
 
+    ret = syscfg_read(CFG_USER_DEFINE_HEARING_VOL, tmp, 1);
+    if (ret < 0)
+    {
+        log_info("read hearing vol err");
+    }
+    else
+    {
+        extern u8 wdrc_mode_index;
+        wdrc_mode_index = tmp[0];
+        // printf("errrrrre3 %d !!!", tmp[0]);
+    }
+
     /*************************************************************************/
     /*                      CFG READ IN cfg_tools.bin                        */
     /*************************************************************************/

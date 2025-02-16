@@ -12,6 +12,7 @@
 #include "media/includes.h"
 #include "pbg_user.h"
 #include "key_driver.h"
+#include "app_action.h"
 #if TCFG_EQ_ENABLE
 #include "application/eq_config.h"
 #endif/*TCFG_EQ_ENABLE*/
@@ -95,7 +96,8 @@ extern float realhear_mode_noise_value;
 static int realhear_vol_val = 80;
 extern void real_volume_set(int val);
 
-static int wdrc_mode_index = 1; //【0- 4】
+#include "audio_dvol.h"
+u8 wdrc_mode_index = HEARING_DVOL_MAX;
 extern void real_wdrc_volume_set(int mode);
 
 
@@ -375,7 +377,7 @@ int app_earphone_key_event_handler(struct sys_event *event)
     set_key_event_by_rcsp_info(event, &key_event);
 #endif
 
-    log_info("key_event:%d %d %d\n", key_event, key->value, key->event);
+    log_info("key_event:arg%d type%d %d %d\n", (u32)event->arg, key_event, key->value, key->event);
 
 #if LL_SYNC_EN
     extern void ll_sync_led_switch(void);
@@ -564,9 +566,19 @@ int app_earphone_key_event_handler(struct sys_event *event)
 #endif
         //====================================//
         break;
-    case  KEY_VOL_UP:
+      case  KEY_VOL_UP:
 
-        log_debug("up key\n");
+        #if 0
+        log_info("USER_CTRL_DEL_ALL_REMOTE_INFO\n");
+                #if TCFG_USER_TWS_ENABLE
+            bt_tws_remove_pairs();
+        #endif
+            user_send_cmd_prepare(USER_CTRL_DEL_ALL_REMOTE_INFO, 0, NULL);
+
+
+        bt_tws_start_search_sibling();
+        break;
+        #endif
 
         if ((get_call_status() == BT_CALL_OUTGOING) ||
             (get_call_status() == BT_CALL_ALERT))
@@ -591,62 +603,28 @@ int app_earphone_key_event_handler(struct sys_event *event)
 
             if (realhear_mode_open == 1)
             {
-                if (get_hearing_vo == 0)
-                {
-                    get_hearing_vo = 1;
-                    wdrc_mode_index = hearing_volume_get();
-                }
-
                 STATUS *p_tone = get_tone_config();
-    //             static int wdrc_mode_index = 1; //【0- 3】
-    // extern void real_wdrc_volume_set(int mode);
 
-                log_info("wdrc_mode_index:%d %d\n", wdrc_mode_index, realhear_mode_vo_toggle);
-                if (1 == realhear_mode_vo_toggle)
+                // log_info("wdrc_mode_index:%d %d\n", wdrc_mode_index, realhear_mode_vo_toggle);
                 {
+                    wdrc_mode_index++;
 
-                    wdrc_mode_index --;
-                    if(wdrc_mode_index < 1)
+                    if (wdrc_mode_index > 16)
                     {
-                        wdrc_mode_index = 1;
-                        realhear_mode_vo_toggle = 0;
-                        // tone_play_index_no_tws(p_tone->max_vol, 0);
-                        hearing_volume_set(wdrc_mode_index);
+                        wdrc_mode_index = 12;
+                        tone_play_index_no_tws(wdrc_mode_index % 12 + IDEX_NEW_VOL_LEVEL_1, 0);
+                    }
+                    else if (wdrc_mode_index == 16)
+                    {
+                        tone_play_index_no_tws(p_tone->max_vol, 0);
                     }
                     else
                     {
-                        hearing_volume_set(wdrc_mode_index);
-
-                        // tone_play_index_no_tws(p_tone->max_vol, 0);
-                    }
-                }
-                else
-                {
-                    wdrc_mode_index++;
-                    if(wdrc_mode_index > 16)
-                    {
-                        wdrc_mode_index = 16;
-        
-                        realhear_mode_vo_toggle = 1;
-                        // tone_play_index(p_tone->max_vol, 0);
-                        tone_play_index_no_tws(p_tone->max_vol, 0);
-                        hearing_volume_set(wdrc_mode_index);
-                    }
-                    else{
-                        hearing_volume_set(wdrc_mode_index);
-
-                        //charge_full
-                        // tone_play_index_no_tws(p_tone->max_vol, 0);
+                        tone_play_index_no_tws(wdrc_mode_index % 12 + IDEX_NEW_VOL_LEVEL_1, 0);
                     }
 
-                    // realhear_vol_val = realhear_vol_val + 10;
-                    // if (realhear_vol_val >= 100)
-                    // {
-                    //     realhear_vol_val = 100;
-                    //     STATUS *p_tone = get_tone_config();
-                    //     tone_play_index(p_tone->max_vol, 0);
-                    // }
-                    // real_volume_set(realhear_vol_val);
+                    hearing_volume_set(wdrc_mode_index);
+                    int ret = syscfg_write(CFG_USER_DEFINE_HEARING_VOL, &wdrc_mode_index, 1);
                 }
             }
             else
@@ -857,32 +835,82 @@ int app_earphone_key_event_handler(struct sys_event *event)
 #endif/*ANC_MULT_ORDER_ENABLE*/
 
     case KEY_HEARING_NOISE_SWITCH:
+
+        log_info("KEY_HEARING_NOISE_SWITCH\n");
         if (1 == realhear_mode_open)
         {
             #define REALHEAR_MODE_NOISE_LEVEL1  (1)
             #define REALHEAR_MODE_NOISE_LEVEL2  (12)
             #define REALHEAR_MODE_NOISE_LEVEL3  (30)
 
-            audio_hearing_aid_suspend();
 
             int level = (int)(realhear_mode_noise_value + 0.5);
+            u8 temp_ns_mode;
 
             if (level <= REALHEAR_MODE_NOISE_LEVEL1)
             {
-                realhear_mode_noise_value = REALHEAR_MODE_NOISE_LEVEL2;
+                temp_ns_mode = 2;
             }
-            else if (level <= REALHEAR_MODE_NOISE_LEVEL2)
-            {
-                realhear_mode_noise_value = REALHEAR_MODE_NOISE_LEVEL3;
-            }
+            // else if (level <= REALHEAR_MODE_NOISE_LEVEL2)
+            // {
+            //     temp_ns_mode = 3;
+            // }
             else
             {
-                realhear_mode_noise_value = REALHEAR_MODE_NOISE_LEVEL1;
+                temp_ns_mode = 1;
             }
 
-            audio_hearing_aid_resume();
+            {
+                STATUS *p_tone = get_tone_config();
+
+                audio_hearing_aid_suspend();
+                if (temp_ns_mode == 1)
+                {
+                    realhear_mode_noise_value = REALHEAR_MODE_NOISE_LEVEL1;
+                    tone_play_index_no_tws(p_tone->hearing_aid_low_ns, 1);
+                }
+                else if (temp_ns_mode == 2)
+                {
+                    realhear_mode_noise_value = REALHEAR_MODE_NOISE_LEVEL2;
+                    tone_play_index_no_tws(p_tone->hearing_aid_mid_ns, 1);
+                }
+                audio_hearing_aid_resume();
+            }            
+
         }
         break;
+
+        case KEY_DUT_TEST_MDOE:
+            struct application *app = get_current_app();
+            if (app)
+            {
+                if (strcmp(app->name, APP_NAME_BT))
+                {
+                    if (!app_var.goto_poweroff_flag)
+                    {
+                        app_var.play_poweron_tone = 0;
+                        task_switch_to_bt();
+                    }
+                }
+                else
+                {
+                    if (get_bt_init_status())
+                    {
+                        log_info("\n\nbt_page_inquiry_scan_for_test\n\n");
+
+                        tone_play_index_no_tws(IDEX_NEW_DUT_MODE, 0);
+                        extern void bredr_set_dut_enble(u8 en, u8 phone);
+                        log_info("bredr_dut_enbale\n");
+                        bredr_set_dut_enble(1, 1);
+                    #if	TCFG_USER_TWS_ENABLE
+                        bt_page_scan_for_test(1);
+                    #endif
+                        link_task_idle_disable();
+                    }
+                }
+            }
+        break;
+
     }
     return ret;
 }

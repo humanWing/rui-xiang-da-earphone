@@ -15,15 +15,15 @@
 #define TONE_NUM_8				SDFILE_RES_ROOT_PATH"tone/8.*"
 #define TONE_NUM_9				SDFILE_RES_ROOT_PATH"tone/9.*"
 #define TONE_BT_MODE			SDFILE_RES_ROOT_PATH"tone/bt.*"
-#define TONE_BT_CONN       		SDFILE_RES_ROOT_PATH"tone/bt_conn.*"
+#define TONE_BT_CONN       		SDFILE_RES_ROOT_PATH"tone/connet.*"
 #define TONE_BT_DISCONN    		SDFILE_RES_ROOT_PATH"tone/bt_dconn.*"
 #define TONE_TWS_CONN			SDFILE_RES_ROOT_PATH"tone/tws_conn.*"
 #define TONE_TWS_DISCONN		SDFILE_RES_ROOT_PATH"tone/tws_dconn.*"
-#define TONE_LOW_POWER			SDFILE_RES_ROOT_PATH"tone/low_power.*"
+#define TONE_LOW_POWER			SDFILE_RES_ROOT_PATH"tone/power_low.*"
 #define TONE_POWER_OFF			SDFILE_RES_ROOT_PATH"tone/power_off.*"
 #define TONE_POWER_ON			SDFILE_RES_ROOT_PATH"tone/power_on.*"
-#define TONE_RING				SDFILE_RES_ROOT_PATH"tone/ring.*"
-#define TONE_MAX_VOL			SDFILE_RES_ROOT_PATH"tone/vol_max.*"
+#define TONE_RING				SDFILE_RES_ROOT_PATH"tone/phone_in.*"
+#define TONE_MAX_VOL			SDFILE_RES_ROOT_PATH"tone/max_vo.*"
 #define TONE_ANC_OFF			SDFILE_RES_ROOT_PATH"tone/anc_off.*"
 #define TONE_ANC_ON				SDFILE_RES_ROOT_PATH"tone/anc_on.*"
 #define TONE_TRANSPARENCY		SDFILE_RES_ROOT_PATH"tone/anc_trans.*"
@@ -40,6 +40,44 @@
 #define TONE_WINDDET_OFF  		SDFILE_RES_ROOT_PATH"tone/winddet_off.*"
 #define TONE_WINDDET_ON  		SDFILE_RES_ROOT_PATH"tone/winddet_on.*"
 
+#define TONE_LOW_NS_ANC         SDFILE_RES_ROOT_PATH"tone/l_ns.*"
+#define TONE_MID_NS_ANC         SDFILE_RES_ROOT_PATH"tone/m_ns.*"
+#define TONE_H_NS_ANC           SDFILE_RES_ROOT_PATH"tone/h_ns.*"
+
+#define TONE_PAIRING            SDFILE_RES_ROOT_PATH"tone/pairing.*"
+#define TONE_ONE_DU             SDFILE_RES_ROOT_PATH"tone/du.*"
+#define TONE_BIG_SOURCE         SDFILE_RES_ROOT_PATH"tone/max_pp.*"
+#define TONE_NEW_LOW_POWER      SDFILE_RES_ROOT_PATH"tone/pp_low.*"
+#define TONE_NEW_CONMING        SDFILE_RES_ROOT_PATH"tone/comming.*"
+#define TONE_NEW_VOL_UP         SDFILE_RES_ROOT_PATH"tone/vol_up.*"
+#define TONE_NEW_VOL_DOWN       SDFILE_RES_ROOT_PATH"tone/vol_dow.*"
+#define TONE_NEW_DUT_MODE       SDFILE_RES_ROOT_PATH"tone/dut_m.*"
+
+
+#define TONE_NEW_VOL_LEVEL_1    SDFILE_RES_ROOT_PATH"tone/nvol1.*"
+#define TONE_NEW_VOL_LEVEL_2    SDFILE_RES_ROOT_PATH"tone/nvol2.*"
+#define TONE_NEW_VOL_LEVEL_3    SDFILE_RES_ROOT_PATH"tone/nvol3.*"
+#define TONE_NEW_VOL_LEVEL_4    SDFILE_RES_ROOT_PATH"tone/nvol4.*"
+
+/*
+
+#define TONE_LOW_POWER			SDFILE_RES_ROOT_PATH"tone/c_power_low.*"
+#define TONE_POWER_OFF			SDFILE_RES_ROOT_PATH"tone/c_power_off.*"
+#define TONE_POWER_ON			SDFILE_RES_ROOT_PATH"tone/c_power_on.*"
+#define TONE_RING				SDFILE_RES_ROOT_PATH"tone/c_phone_in.*"
+#define TONE_MAX_VOL			SDFILE_RES_ROOT_PATH"tone/c_max_vo.*"
+c_connet        // 已连接
+c_disconnet     // 断开连接
+c_h_ns          // 强噪模式
+c_l_ns          //  室内模式
+c_m_ns          //  室外模式
+c_max_vo        // 最大音量
+c_pairing       //  配对中
+c_phone_in      //  你有新的来电
+c_power_low     //  电量低
+c_power_off     //  关机
+c_power_on      // 开机
+*/
 
 #define SINE_WTONE_NORAML           0
 #define SINE_WTONE_TWS_CONNECT      1
@@ -112,6 +150,22 @@ enum {
     IDEX_TONE_ANC_ADAPTIVE,
     IDEX_TONE_ANC_ADAPTIVE_COEFF,
     IDEX_TONE_ANC_NORMAL_COEFF,
+    IDEX_TONE_HEARING_AID_LOW_NS,
+    IDEX_TONE_HEARING_AID_MID_NS,
+    IDEX_TONE_HEARING_AID_HIGH_NS,
+    IDEX_TONE_PAIRING,
+    IDEX_TONE_DU,               // 嘟一声
+    IDEX_BIG_SOUR,              // 新最大音量
+    IDEX_NEW_LOW_POWER,         // 新低电
+    IDEX_NEW_COMMING,           // 新来电
+    IDEX_NEW_VOL_UP,            // 新音量+
+    IDEX_NEW_VOL_DOWN,          // 新音量-
+    IDEX_NEW_DUT_MODE,          // DUT
+
+    IDEX_NEW_VOL_LEVEL_1,       // 音量等级1
+    IDEX_NEW_VOL_LEVEL_2,       // 音量等级2
+    IDEX_NEW_VOL_LEVEL_3,       // 音量等级3
+    IDEX_NEW_VOL_LEVEL_4,       // 音量等级4
 
 
     IDEX_TONE_NONE = 0xFF,

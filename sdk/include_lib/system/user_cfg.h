@@ -44,6 +44,10 @@ typedef struct __STATUS {
     u8 bt_disconnect;   //蓝牙断开
     u8 tws_connect_ok;   	//TWS连接成功
     u8 tws_disconnect;   	//TWS蓝牙断开
+    u8 hearing_aid_low_ns;  // 室内模式
+    u8 hearing_aid_mid_ns;  // 室外模式
+    u8 hearing_aid_hight_ns;  // 强噪模式
+    u8 phone_pairing;  // 强噪模式
 } _GNU_PACKED_ STATUS;
 
 typedef struct __STATUS_CONFIG {

@@ -83,16 +83,20 @@ STATUS_CONFIG status_config = {
         .charge_full   = IDEX_TONE_NONE,
         .power_on      = IDEX_TONE_POWER_ON,
         .power_off     = IDEX_TONE_POWER_OFF,
-        .lowpower      = IDEX_TONE_LOW_POWER,
-        .max_vol       = IDEX_TONE_MAX_VOL,
-        .phone_in      = IDEX_TONE_NONE,
+        .lowpower      = IDEX_NEW_LOW_POWER,
+        .max_vol       = IDEX_BIG_SOUR,
+        .phone_in      = IDEX_NEW_COMMING,
         .phone_out     = IDEX_TONE_NONE,
         .phone_activ   = IDEX_TONE_NONE,
-        .bt_init_ok    = IDEX_TONE_BT_MODE,
+        .bt_init_ok    = IDEX_TONE_NONE,
         .bt_connect_ok = IDEX_TONE_BT_CONN,
         .bt_disconnect = IDEX_TONE_BT_DISCONN,
-        .tws_connect_ok   = IDEX_TONE_TWS_CONN,
-        .tws_disconnect   = IDEX_TONE_TWS_DISCONN,
+        .tws_connect_ok   = IDEX_TONE_DU,
+        .tws_disconnect   = IDEX_TONE_NONE,
+        .hearing_aid_low_ns = IDEX_TONE_HEARING_AID_LOW_NS,
+        .hearing_aid_mid_ns = IDEX_TONE_HEARING_AID_MID_NS,
+        .hearing_aid_hight_ns = IDEX_TONE_HEARING_AID_HIGH_NS,
+        .phone_pairing = IDEX_TONE_PAIRING,
     }
 };
 
@@ -136,8 +140,8 @@ u8 key_table[KEY_NUM_MAX][KEY_EVENT_MAX] = {
 };
 #else
 u8 key_table[KEY_NUM_MAX][KEY_EVENT_MAX] = {
-    // SHORT                        LONG                HOLD                UP              DOUBLE                      TRIPLE
-    {KEY_VOL_UP,                    KEY_POWEROFF,       KEY_POWEROFF_HOLD,  KEY_NULL,       KEY_HEARING_NOISE_SWITCH,   KEY_MODE_SWITCH},   //KEY_0
+    // SHORT                        LONG                HOLD                UP              DOUBLE                      TRIPLE                  FOURTH      FIRTH
+    {KEY_VOL_UP,                    KEY_POWEROFF,       KEY_POWEROFF_HOLD,  KEY_NULL,       KEY_HEARING_NOISE_SWITCH,   KEY_OPEN_SIRI , KEY_HEARING_AID_TOGGLE, KEY_DUT_TEST_MDOE},   //KEY_0
     {KEY_MUSIC_PP,                  KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,                   KEY_NULL},          //KEY_1
     {KEY_VOL_DOWN,                  KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,                   KEY_NULL},          //KEY_2
     {KEY_VOL_UP,                    KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,                   KEY_NULL},          //KEY_2

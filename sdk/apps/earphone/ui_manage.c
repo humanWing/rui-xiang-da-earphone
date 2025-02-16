@@ -83,10 +83,10 @@ void ui_manage_scan(void *priv)
                 case STATUS_POWEROFF:
                     sys_ui_var.ui_flash_cnt = GET_LED_BRIGHT_TIME(3);   // 亮3秒
                     break;
-                case STATUS_CHARGE_FULL:
-                    sys_ui_var.ui_flash_cnt = GET_LED_BRIGHT_TIME(5);   // 亮3秒
+                case STATUS_CHARGE_CLOSE:
+                    sys_ui_var.ui_flash_cnt = GET_LED_BRIGHT_TIME(5);   // 亮5秒
                     break;
-                case STATUS_BT_TWS_START:
+                case STATUS_BT_TWS_START_HAVE_INFO:
                     sys_ui_var.ui_flash_cnt = 5;   // 闪2下
                     break;
 
@@ -118,10 +118,10 @@ void ui_manage_scan(void *priv)
     }
 
 #if ((RCSP_ADV_EN)&&(JL_EARPHONE_APP_EN))
-    if (tws_api_get_role() == TWS_ROLE_SLAVE) {
-        pwm_led_mode_set(PWM_LED_ALL_OFF);
-        return;
-    }
+    // if (tws_api_get_role() == TWS_ROLE_SLAVE) {
+    //     pwm_led_mode_set(PWM_LED_ALL_OFF);
+    //     return;
+    // }
 #endif
 
     if (sys_ui_var.other_status != STATUS_POWEROFF
@@ -139,32 +139,6 @@ void ui_manage_scan(void *priv)
 
         case STATUS_CHARGE_FULL:
             log_info("[STATUS_CHARGE_FULL]\n");
-            // pwm_led_mode_set(p_led->charge_full);
-            if (p_led->power_on == PWM_ONE_LED_BRIGHT_5S)
-            {
-                // if (sys_ui_var.ui_flash_cnt)
-                {
-                    // if (get_bt_tws_connect_status())
-                    // {
-                    //     sys_ui_var.ui_flash_cnt = 0;
-                    //     ui_manage_scan(NULL);
-                    //     return;
-                    // }
-
-                    if (GET_LED_BRIGHT_TIME_START(5) == sys_ui_var.ui_flash_cnt)
-                    {
-                        pwm_led_mode_set(PWM_LED0_ON);
-                    }
-                    else if (0 == sys_ui_var.ui_flash_cnt)
-                    {
-                        pwm_led_mode_set(PWM_LED0_OFF);
-                    }
-                    else
-                    {
-
-                    }
-                }
-            }
             return;
 
         case STATUS_CHARGE_ERR:
@@ -175,8 +149,24 @@ void ui_manage_scan(void *priv)
 
         case STATUS_CHARGE_CLOSE:
             log_info("[STATUS_CHARGE_CLOSE]\n");
-            pwm_led_mode_set(PWM_LED0_OFF);
-            pwm_led_mode_set(PWM_LED1_OFF);
+            {
+                {
+
+
+                    if (GET_LED_BRIGHT_TIME_START(5) == sys_ui_var.ui_flash_cnt)
+                    {
+                        pwm_led_mode_set(PWM_LED0_ON);
+                    }
+                    else if (0 == sys_ui_var.ui_flash_cnt)
+                    {
+                        pwm_led_mode_set(PWM_LED_ALL_OFF);
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
             return;
 
         case STATUS_CHARGE_LDO5V_OFF:
@@ -189,6 +179,8 @@ void ui_manage_scan(void *priv)
             break;
         }
     }
+
+    log_info("other_status:%d\n", sys_ui_var.other_status);
 
     switch (sys_ui_var.other_status) {
     case STATUS_POWERON:
@@ -268,6 +260,11 @@ void ui_manage_scan(void *priv)
         pwm_led_mode_set(p_led->bt_init_ok);
         break;
 
+    case STATUS_RECOVER_FACTORY:
+        log_info("[STATUS_RECOVER_FACTORY]\n");
+        pwm_led_mode_set(PWM_LED0_FAST_FLASH);
+        break;
+
     case STATUS_BT_SLAVE_CONN_MASTER:
         // pwm_led_mode_set(PWM_LED1_SLOW_FLASH);
         break;
@@ -316,7 +313,11 @@ void ui_manage_scan(void *priv)
         pwm_led_mode_set(p_led->tws_disconnect);
         break;
     case STATUS_BT_TWS_START:
-        log_info("[STATUS_BT_TWS_START]%d\n", sys_ui_var.ui_flash_cnt);
+        log_info("[STATUS_BT_TWS_START]\n");
+        pwm_led_mode_set(PWM_LED0_FAST_FLASH);
+        break;        
+    case STATUS_BT_TWS_START_HAVE_INFO:
+        log_info("[STATUS_BT_TWS_START_HAVE_INFO]%d\n", sys_ui_var.ui_flash_cnt);
         if (sys_ui_var.ui_flash_cnt % 2)
         {
             pwm_led_mode_set(PWM_LED0_ON);
@@ -349,7 +350,7 @@ void ui_update_status(u8 status)
         ui_manage_init();
     }
     log_info("update ui status :%d", status);
-    if (status == STATUS_POWERON || (status == STATUS_POWEROFF) || (status == STATUS_CHARGE_FULL) )
+    if (status == STATUS_POWERON || (status == STATUS_POWEROFF) || (status == STATUS_CHARGE_CLOSE) )
     {
         cbuf_write(&(sys_ui_var.ui_cbuf), &status, 1);
         ui_manage_scan(NULL);

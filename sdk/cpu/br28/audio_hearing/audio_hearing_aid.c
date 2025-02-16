@@ -40,6 +40,7 @@
 
 //#define REAL_HEAR_DEMO 1
 //#define REALHEAR_ENABLE 1 // liurui
+extern u8 wdrc_mode_index;
 
 int realhear_mode_open = 0;
 float realhear_mode_noise_value = 1.0;
@@ -1300,8 +1301,8 @@ static void hearing_volume_run(s16 *data, int len)
 /*设置音量*/
 void hearing_volume_set(u8 volume)
 {
-    dha_schedule.volume = volume;
-    audio_digital_vol_set(HEARING_DVOL, volume);
+    dha_schedule.volume = (volume > HEARING_DVOL_MAX) ? HEARING_DVOL_MAX : volume;
+    audio_digital_vol_set(HEARING_DVOL, dha_schedule.volume);
 }
 /*获取当前音量大小*/
 int hearing_volume_get(void)
@@ -1311,6 +1312,7 @@ int hearing_volume_get(void)
 /*打开数字音量*/
 static void hearing_volume_open(u8 volume)
 {
+    printf("vol %d\n\n\n", volume);
     dha_schedule.volume = (volume > HEARING_DVOL_MAX) ? HEARING_DVOL_MAX : volume;
     audio_digital_vol_open(HEARING_DVOL, dha_schedule.volume, HEARING_DVOL_MAX, HEARING_DVOL_FS, -1);
 }
@@ -2100,7 +2102,7 @@ int audio_hearing_aid_open(void)
     app_audio_set_volume(APP_AUDIO_STATE_MUSIC, get_max_sys_vol(), 1);
 
 #if DHA_VOLUME_ENABLE
-    hearing_volume_open(HEARING_DVOL_MAX);
+    hearing_volume_open(wdrc_mode_index);
 #endif /*DHA_VOLUME_ENABLE*/
 
     // DAC 初始化
@@ -2139,6 +2141,9 @@ int audio_hearing_aid_open(void)
     dha_schedule.state = DHA_STATE_OPEN;
     printf("audio_hearing_aid_open success!");
     mem_stats();
+
+    realhear_mode_open = 1;
+
     return 0;
 __err:
     if (hdl)
@@ -2164,7 +2169,7 @@ void audio_hearing_aid_sync_open(void)
 #if TCFG_USER_TWS_ENABLE
     if (get_tws_sibling_connect_state())
     {
-        if (tws_api_get_role() == TWS_ROLE_MASTER)
+        // if (tws_api_get_role() == TWS_ROLE_MASTER)
         {
             printf("[tws_master]dha open");
             // bt_tws_play_tone_at_same_time(SYNC_TONE_HEARING_AID_OPEN, 400);
@@ -2427,10 +2432,11 @@ void audio_hearing_aid_demo(void)
 {
     hearing_aid_t *hdl = (hearing_aid_t *)hearing_hdl;
     // printf("audio_hearing_aid_demo,toggle = %x\n", hdl);
+
     if (hdl == NULL)
     {
-        audio_hearing_aid_sync_open();
         realhear_mode_open = 1;
+        audio_hearing_aid_sync_open();
     }
     else
     {
@@ -2442,6 +2448,29 @@ void audio_hearing_aid_demo(void)
         audio_hearing_aid_close();
 
         realhear_mode_open = 0;
+    }
+}
+
+/// @brief 开机设置多少秒开启助听模式
+/// @param priv 
+static void hearing_setting_aid_schedule(void *priv)
+{
+    hearing_aid_t *hdl = (hearing_aid_t *)hearing_hdl;
+
+    if (hdl == NULL)
+    {
+        realhear_mode_open = 1;
+        audio_hearing_aid_sync_open();
+    }
+}
+
+void hearing_aid_moed_start(void)
+{
+    printf("hearing_mode_status:%d\n", realhear_mode_open);
+
+    if (0 == realhear_mode_open)
+    {
+        sys_timeout_add(NULL, hearing_setting_aid_schedule, 15000);
     }
 }
 

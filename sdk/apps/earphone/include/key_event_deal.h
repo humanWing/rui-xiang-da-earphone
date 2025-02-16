@@ -80,6 +80,8 @@ enum {
     KEY_ANC_MULT_SCENE_SWITCH,	/*多滤波器切换demo*/
 
     KEY_HEARING_NOISE_SWITCH, //< 辅听模式降噪模式切换
+    KEY_HEARING_FUNCITON_TEST, //< 辅听模式降噪模式切换
+    KEY_DUT_TEST_MDOE, //< 辅听模式降噪模式切换
 
     KEY_NULL = 0xFF,
 };
