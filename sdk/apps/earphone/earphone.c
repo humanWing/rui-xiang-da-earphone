@@ -1152,7 +1152,8 @@ static void number_to_play_list(char *num, u32 *lst)
 #endif
 
     lst[i++] = (u32)TONE_REPEAT_BEGIN(-1);
-    lst[i++] = (u32)TONE_RING;
+    // lst[i++] = (u32)TONE_RING;
+    lst[i++] = (u32)IDEX_NEW_COMMING;
     lst[i++] = (u32)TONE_REPEAT_END();
     lst[i++] = (u32)NULL;
 }
@@ -1224,6 +1225,7 @@ u8 phone_ring_play_start(void)
 #if BT_INBAND_RINGTONE
         /* bt_user_priv_var.phone_timer_id = sys_timeout_add(NULL, phone_check_inband_ring_play_timer, 4000); //4s之后检测有没建立通话链路，没有建立播本地铃声 */
 #endif
+        tone_play_index_no_tws(IDEX_NEW_COMMING, 0);
     }
     return 0;
 }
