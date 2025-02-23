@@ -465,14 +465,21 @@ int app_earphone_key_event_handler(struct sys_event *event)
         user_send_cmd_prepare(USER_CTRL_ALL_SNIFF_EXIT, 0, NULL);
         break;
     case  KEY_POWEROFF_HOLD:
+// #if (TCFG_USER_TWS_ENABLE && CONFIG_TWS_POWEROFF_SAME_TIME == 0)
+//         if ((u32)event->arg == KEY_EVENT_FROM_TWS) {
+//             break;
+//         }
+// #endif
+        log_info("poweroff flag:%d cnt:%d\n", goto_poweroff_flag, goto_poweroff_cnt);
+
+        if (goto_poweroff_flag) {
+            
 #if (TCFG_USER_TWS_ENABLE && CONFIG_TWS_POWEROFF_SAME_TIME == 0)
         if ((u32)event->arg == KEY_EVENT_FROM_TWS) {
             break;
         }
 #endif
-        log_info("poweroff flag:%d cnt:%d\n", goto_poweroff_flag, goto_poweroff_cnt);
 
-        if (goto_poweroff_flag) {
             goto_poweroff_cnt++;
 
 #if CONFIG_TWS_POWEROFF_SAME_TIME
@@ -595,6 +602,14 @@ int app_earphone_key_event_handler(struct sys_event *event)
         }
         else
         {
+
+            struct key_event *key = &event->u.key;
+            
+            if ((u32)event->arg == SYS_BT_EVENT_FROM_TWS)
+            {
+                break;
+            }
+
             static u8 realhear_mode_vo_toggle = 0;
             static u8 get_hearing_vo = 0;
             extern void hearing_volume_set(u8 volume);
