@@ -429,7 +429,7 @@ int app_earphone_key_event_handler(struct sys_event *event)
                 }
                 else
                 {
-            user_send_cmd_prepare(USER_CTRL_AVCTP_OPID_PLAY, 0, NULL);
+                    user_send_cmd_prepare(USER_CTRL_AVCTP_OPID_PLAY, 0, NULL);
                 }
             }
         }
@@ -486,11 +486,11 @@ int app_earphone_key_event_handler(struct sys_event *event)
 
         if (goto_poweroff_flag) {
             
-#if (TCFG_USER_TWS_ENABLE && CONFIG_TWS_POWEROFF_SAME_TIME == 0)
-        if ((u32)event->arg == KEY_EVENT_FROM_TWS) {
-            break;
-        }
-#endif
+        #if (TCFG_USER_TWS_ENABLE && CONFIG_TWS_POWEROFF_SAME_TIME == 0)
+            if ((u32)event->arg == KEY_EVENT_FROM_TWS) {
+                break;
+            }
+        #endif
 
             goto_poweroff_cnt++;
 
@@ -923,8 +923,9 @@ int app_earphone_key_event_handler(struct sys_event *event)
                 {
                     if (get_bt_init_status())
                     {
+                        #include "ui_manage.h"
                         log_info("\n\nbt_page_inquiry_scan_for_test\n\n");
-
+                        ui_update_status(STATUS_BT_DUT_TEST_MODE);
                         tone_play_index_no_tws(IDEX_NEW_DUT_MODE, 0);
                         extern void bredr_set_dut_enble(u8 en, u8 phone);
                         log_info("bredr_dut_enbale\n");
