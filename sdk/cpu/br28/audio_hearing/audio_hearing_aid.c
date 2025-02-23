@@ -2453,6 +2453,8 @@ void audio_hearing_aid_demo(void)
 
 /// @brief 开机设置多少秒开启助听模式
 /// @param priv 
+#include "tone_player.h"
+
 static void hearing_setting_aid_schedule(void *priv)
 {
     hearing_aid_t *hdl = (hearing_aid_t *)hearing_hdl;
@@ -2461,6 +2463,8 @@ static void hearing_setting_aid_schedule(void *priv)
     {
         realhear_mode_open = 1;
         audio_hearing_aid_sync_open();
+
+        tone_play_index(IDEX_TONE_HEARING_OPEN, 0);
     }
 }
 
