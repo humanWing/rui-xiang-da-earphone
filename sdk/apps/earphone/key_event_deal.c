@@ -97,7 +97,7 @@ static int realhear_vol_val = 80;
 extern void real_volume_set(int val);
 
 #include "audio_dvol.h"
-u8 wdrc_mode_index = HEARING_DVOL_MAX;
+u8 wdrc_mode_index = HEARING_DVOL_MAX - 1;
 extern void real_wdrc_volume_set(int mode);
 
 

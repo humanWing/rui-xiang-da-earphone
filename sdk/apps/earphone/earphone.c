@@ -1481,7 +1481,7 @@ static int bt_connction_status_event_handler(struct bt_event *bt)
             bt_user_priv_var.auto_connection_counter = 0;
 
             extern u8 wdrc_mode_index;
-            wdrc_mode_index = 16;
+            wdrc_mode_index = 15;
             syscfg_write(CFG_USER_DEFINE_HEARING_VOL, &wdrc_mode_index, 1);
 
             ui_update_status(STATUS_RECOVER_FACTORY);
