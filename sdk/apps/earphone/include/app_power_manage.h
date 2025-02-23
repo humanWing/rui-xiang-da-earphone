@@ -7,7 +7,7 @@
 #define LOW_POWER_SHUTDOWN      300  //低电直接关机电压-拔出不开机-开盖不开机
 #define LOW_POWER_OFF_VAL   	315  //低电关机电压
 #define LOW_POWER_WARN_VAL   	350  //低电提醒电压
-#define LOW_POWER_WARN_TIME   	(30 * 1000)  //低电提醒时间
+#define LOW_POWER_WARN_TIME   	(60 * 1000)  //低电提醒时间
 
 #define DEVICE_EVENT_FROM_POWER		(('P' << 24) | ('O' << 16) | ('W' << 8) | '\0')
 
