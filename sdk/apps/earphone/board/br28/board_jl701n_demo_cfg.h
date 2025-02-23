@@ -299,9 +299,9 @@
 /*听力验配功能*/
 #define TCFG_AUDIO_DHA_FITTING_ENABLE		ENABLE //ENABLE //DISABLE
 /*辅听功能互斥配置*/
-#define TCFG_AUDIO_DHA_AND_MUSIC_MUTEX		ENABLE  //ENABLE	//辅听功能和音乐播放互斥(默认互斥，资源有限)
+#define TCFG_AUDIO_DHA_AND_MUSIC_MUTEX		DISABLE  //ENABLE	//辅听功能和音乐播放互斥(默认互斥，资源有限)
 #define TCFG_AUDIO_DHA_AND_CALL_MUTEX		ENABLE	//辅听功能和通话互斥(默认互斥，资源有限)
-#define TCFG_AUDIO_DHA_AND_TONE_MUTEX		ENABLE //ENABLE	//辅听功能和提示音互斥
+#define TCFG_AUDIO_DHA_AND_TONE_MUTEX		DISABLE //ENABLE	//辅听功能和提示音互斥
 /*辅听功能MIC的采样率*/
 #define TCFG_AUDIO_DHA_MIC_SAMPLE_RATE		(16000) //(32000)
 

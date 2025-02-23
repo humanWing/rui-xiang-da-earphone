@@ -119137,7 +119137,7 @@
 	"app_config.h"
 	"uartPcmSender.h"
 
-1735981901 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\include\app_config.h
+1739675519 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\include\app_config.h
 	"board_config.h"
 	"usb_std_class_def.h"
 	"usb_common_def.h"
@@ -119155,7 +119155,7 @@
 
 1706666736 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\include_lib\media\audio_def.h
 
-1735966373 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\board\br28\board_jl701n_demo_cfg.h
+1740282136 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\board\br28\board_jl701n_demo_cfg.h
 	"board_jl701n_demo_global_build_cfg.h"
 	"usb_std_class_def.h"
 	"usb_std_class_def.h"
@@ -119242,7 +119242,7 @@
 
 1706666736 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\include_lib\system\init.h
 
-1706666736 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\include_lib\system\event.h
+1740282758 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\include_lib\system\event.h
 	"generic/typedef.h"
 	"generic/list.h"
 	"generic/rect.h"
@@ -119264,7 +119264,7 @@
 1706666736 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\include_lib\system\task.h
 	"os/os_api.h"
 
-1706666736 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\include_lib\system\timer.h
+1740285906 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\include_lib\system\timer.h
 	"typedef.h"
 	"generic/list.h"
 
@@ -119583,7 +119583,7 @@
 1706666736 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\include_lib\media\media_new\media\plc.h
 	"generic/typedef.h"
 
-1732440383 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\cpu\br28\audio_config.h
+1739681681 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\cpu\br28\audio_config.h
 	"generic/typedef.h"
 	"board_config.h"
 
@@ -119704,7 +119704,7 @@
 	"media/includes.h"
 	"system/includes.h"
 
-1739102292 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\include\tone_player.h
+1740285196 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\include\tone_player.h
 	"app_config.h"
 	"tone_player_api.h"
 
@@ -119781,7 +119781,7 @@
 1706666736 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\include_lib\system\config\config_target.h
 	"typedef.h"
 
-1706666736 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\include_lib\btctrler\classic\tws_api.h
+1740286189 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\include_lib\btctrler\classic\tws_api.h
 	"typedef.h"
 	"classic/tws_event.h"
 	"classic/tws_local_media_sync.h"
@@ -120491,7 +120491,7 @@
 
 1706666738 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\include_lib\driver\cpu\br28\asm\irflt.h
 
-1706666730 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\common\device\key\key_driver.c
+1740283475 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\common\device\key\key_driver.c
 	"device/key_driver.h"
 	"system/event.h"
 	"system/init.h"
@@ -121446,7 +121446,7 @@
 	"ble_user.h"
 	"spp_user.h"
 
-1731846561 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\common\third_party_profile\interface\app_protocol_api.h
+1739675342 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\common\third_party_profile\interface\app_protocol_api.h
 	<string.h>
 	<stdint.h>
 	"typedef.h"
@@ -121521,7 +121521,7 @@
 	"typedef.h"
 	"system/event.h"
 
-1730388332 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\include\app_power_manage.h
+1739687329 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\include\app_power_manage.h
 	"typedef.h"
 	"system/event.h"
 
@@ -121744,7 +121744,7 @@
 	"rcsp_adv_tws_sync.h"
 	"rcsp_adv_opt.h"
 
-1732442265 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\include\ui_manage.h
+1739686876 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\include\ui_manage.h
 	"typedef.h"
 
 1706666732 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\common\third_party_profile\jieli\jl_rcsp\adv_app_setting\adv_led_setting.h
@@ -123691,7 +123691,7 @@
 	"os/os_api.h"
 	"generic/list.h"
 
-1732889173 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\bt_tws.c
+1740287541 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\bt_tws.c
 	"system/includes.h"
 	"media/includes.h"
 	"device/vm.h"
@@ -123749,7 +123749,7 @@
 
 1706666724 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\include\app_sd_music.h
 
-1735966419 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\earphone.c
+1740287240 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\earphone.c
 	"system/includes.h"
 	"media/includes.h"
 	"tone_player.h"
@@ -123840,7 +123840,7 @@
 	"btstack/btstack_typedef.h"
 	"avctp_user.h"
 
-1739104082 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\key_event_deal.c
+1740290061 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\key_event_deal.c
 	"key_event_deal.h"
 	"btstack/avctp_user.h"
 	"event.h"
@@ -123862,6 +123862,7 @@
 	"icsd_adt_app.h"
 	"debug.h"
 	"audio_dvol.h"
+	"ui_manage.h"
 
 1706666728 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\kws_voice_event_deal.c
 	"includes.h"
@@ -123978,7 +123979,7 @@
 	"app_charge.h"
 	"debug.h"
 
-1732451367 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\pbg_demo.c
+1740145501 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\pbg_demo.c
 	"system/includes.h"
 	"string.h"
 	"circular_buf.h"
@@ -124011,7 +124012,7 @@
 	"asm/chargestore.h"
 	"debug.h"
 
-1732545501 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\power_manage\app_charge.c
+1740153181 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\power_manage\app_charge.c
 	"app_config.h"
 	"asm/charge.h"
 	"asm/pwm_led.h"
@@ -124129,7 +124130,7 @@
 
 1706666728 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\sdk_version.z.s
 
-1739102260 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\tone_table.c
+1740281986 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\tone_table.c
 	"tone_player.h"
 	"system/includes.h"
 
@@ -124193,7 +124194,7 @@
 	"app_msg.h"
 	"ui/lcd_simple/ui_mainmenu.h"
 
-1732547081 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\ui_manage.c
+1740153037 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\ui_manage.c
 	"ui_manage.h"
 	"asm/pwm_led.h"
 	"system/includes.h"
@@ -124202,7 +124203,7 @@
 	"classic/tws_api.h"
 	"debug.h"
 
-1739093314 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\user_cfg.c
+1739681235 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\user_cfg.c
 	"app_config.h"
 	"user_cfg.h"
 	"fs.h"
@@ -124976,7 +124977,7 @@
 	"media/includes.h"
 	"audio_config.h"
 
-1739091240 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\cpu\br28\audio_hearing\audio_hearing_aid.c
+1740288492 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\cpu\br28\audio_hearing\audio_hearing_aid.c
 	"generic/typedef.h"
 	"board_config.h"
 	"media/includes.h"
@@ -125003,6 +125004,7 @@
 	"debug.h"
 	"../realhear/real_ringbuf.h"
 	"Resample_api.h"
+	"tone_player.h"
 
 1706666736 c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\include_lib\media\howling_api.h
 	"media/howling_pitchshifter_api.h"
@@ -125474,7 +125476,7 @@
 	"asm/clock.h"
 	"asm/spi.h"
 
-1731429519 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\cpu\br28\tone_player.c
+1739681937 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\cpu\br28\tone_player.c
 	"system/includes.h"
 	"media/includes.h"
 	"tone_player.h"
@@ -125512,7 +125514,7 @@
 	"app_config.h"
 	"timer.h"
 
-1739089964 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\board\br28\board_jl701n_demo.c
+1740289408 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\apps\earphone\board\br28\board_jl701n_demo.c
 	"app_config.h"
 	"system/includes.h"
 	"media/includes.h"
@@ -125541,7 +125543,7 @@
 	"imu_sensor/icm_42670p/icm_42670p.h"
 	"debug.h"
 
-1731242766 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\cpu\br28\ldoin_commu.c
+1740151258 source:c:\users\13632\desktop\tempfile\ui-241026\ui-241026\sdk\cpu\br28\ldoin_commu.c
 	"app_config.h"
 	"system/includes.h"
 	"ldoin_commu.h"
