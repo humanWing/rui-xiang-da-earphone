@@ -173,10 +173,15 @@ int user_chargestore_event_handler(struct chargestore_event *chargestore_dev)
         ldo_comm_printf("clear all info\n");
         if (app && strcmp(app->name, APP_NAME_BT)/*  && (app_var.goto_poweroff_flag == 0) */)
         {
-            factory_pro_flag = 1;
             power_set_mode(TCFG_LOWPOWER_POWER_SEL);
             task_switch_to_bt();
         }
+
+        if (factory_pro_flag == 0)
+        {
+            factory_pro_flag = 1;
+        }
+
 // #if TCFG_USER_TWS_ENABLE
 //         bt_tws_remove_pairs();
 // #endif
@@ -190,13 +195,16 @@ int user_chargestore_event_handler(struct chargestore_event *chargestore_dev)
 //         break;
 
     case 3:
-        if (!shutdown_timer)
+        if (!factory_pro_flag)
         {
-            shutdown_timer = sys_timer_add(NULL, user_chargestore_shutdown_do, 1000);
-        }
-        else
-        {
-            sys_timer_modify(shutdown_timer, 1000);
+            if (!shutdown_timer)
+            {
+                shutdown_timer = sys_timer_add(NULL, user_chargestore_shutdown_do, 1000);
+            }
+            else
+            {
+                sys_timer_modify(shutdown_timer, 1000);
+            }
         }
         break;
     default:

@@ -1537,7 +1537,11 @@ void tws_conn_auto_test(void *p)
     cpu_reset();
 }
 
-
+#define FACTORY_RESTART_CALL_TIME       3000
+static void factory_restart_call(void *priv)
+{
+    cpu_reset();
+}
 
 
 /*
@@ -1729,7 +1733,7 @@ int bt_tws_connction_status_event_handler(struct bt_event *evt)
         if (factory_pro_flag)
         {
             factory_pro_flag = 0;
-            cpu_reset();
+            sys_timeout_add(NULL, factory_restart_call, FACTORY_RESTART_CALL_TIME);
         }
 
         break;
@@ -1751,7 +1755,7 @@ int bt_tws_connction_status_event_handler(struct bt_event *evt)
         if (factory_pro_flag)
         {
             factory_pro_flag = 0;
-            cpu_reset();
+            sys_timeout_add(NULL, factory_restart_call, FACTORY_RESTART_CALL_TIME);
         }
 
         break;
@@ -1794,7 +1798,7 @@ int bt_tws_connction_status_event_handler(struct bt_event *evt)
         if (factory_pro_flag)
         {
             factory_pro_flag = 0;
-            cpu_reset();
+            sys_timeout_add(NULL, factory_restart_call, FACTORY_RESTART_CALL_TIME);
         }
         break;
     case TWS_EVENT_CONNECTION_DETACH:
@@ -1804,7 +1808,7 @@ int bt_tws_connction_status_event_handler(struct bt_event *evt)
         if (factory_pro_flag)
         {
             factory_pro_flag = 0;
-            cpu_reset();
+            sys_timeout_add(NULL, factory_restart_call, FACTORY_RESTART_CALL_TIME);
         }
 
         if (app_var.goto_poweroff_flag) {

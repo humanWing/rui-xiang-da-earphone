@@ -89,6 +89,9 @@ void ui_manage_scan(void *priv)
                 case STATUS_BT_TWS_START_HAVE_INFO:
                     sys_ui_var.ui_flash_cnt = 5;   // 闪2下
                     break;
+                case STATUS_RECOVER_FACTORY:
+                    sys_ui_var.ui_flash_cnt = 21;   // 闪 10 下
+                    break;
 
                 default:
                     break;
@@ -262,7 +265,18 @@ void ui_manage_scan(void *priv)
 
     case STATUS_RECOVER_FACTORY:
         log_info("[STATUS_RECOVER_FACTORY]\n");
-        pwm_led_mode_set(PWM_LED0_FAST_FLASH);
+        // pwm_led_mode_set(PWM_LED0_FAST_FLASH);
+        if (sys_ui_var.ui_flash_cnt)
+        {
+            if (sys_ui_var.ui_flash_cnt % 2)
+            {
+                pwm_led_mode_set(PWM_LED0_OFF);
+            }
+            else
+            {
+                pwm_led_mode_set(PWM_LED0_ON);
+            }
+        }
         break;
 
     case STATUS_BT_SLAVE_CONN_MASTER:
@@ -350,6 +364,11 @@ void ui_update_status(u8 status)
         ui_manage_init();
     }
     log_info("update ui status :%d", status);
+
+    if (STATUS_RECOVER_FACTORY == sys_ui_var.current_status)
+    {
+        return;
+    }
     if (status == STATUS_POWERON || (status == STATUS_POWEROFF) || (status == STATUS_CHARGE_CLOSE) )
     {
         cbuf_write(&(sys_ui_var.ui_cbuf), &status, 1);
