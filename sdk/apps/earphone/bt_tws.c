@@ -492,6 +492,38 @@ static int bt_tws_connect_phone()
     return timeout;
 }
 
+static u16 bt_scan_time_id = 0;
+u8 user_ctrl_write_scan_disable_flag = 0;
+
+static void bt_scan_disable_start_schedule(void *priv)
+{
+    printf("phone_connected :%x\n", (tws_api_get_tws_state() & TWS_STA_PHONE_CONNECTED));
+
+    if ((get_bt_init_status())
+        && (tws_api_get_tws_state() & TWS_STA_PHONE_CONNECTED) == 0)
+    {
+        tws_api_cancle_wait_pair();
+        user_send_cmd_prepare(USER_CTRL_WRITE_SCAN_DISABLE, 0, NULL);
+        user_send_cmd_prepare(USER_CTRL_WRITE_CONN_ENABLE, 0, NULL);
+        user_ctrl_write_scan_disable_flag = 1;
+    }
+    bt_scan_time_id = 0;
+}
+
+void bt_scan_disable_start(void)
+{
+    if (0 == bt_scan_time_id)
+    {
+        bt_scan_time_id = sys_timeout_add(NULL, bt_scan_disable_start_schedule, 120000);
+    }
+}
+
+
+void bt_user_ctrl_write_scan_enable(void)
+{
+    user_send_cmd_prepare(USER_CTRL_WRITE_SCAN_ENABLE, 0, NULL);
+    user_send_cmd_prepare(USER_CTRL_WRITE_CONN_ENABLE, 0, NULL);
+}
 
 /*
  * TWS 回连手机、开可发现可连接、回连已配对设备、搜索tws设备 4个状态间定时切换函数
@@ -499,7 +531,6 @@ static int bt_tws_connect_phone()
  */
 #ifdef CONFIG_NEW_BREDR_ENABLE
 static u8 gu8_connet_phone_tone = 0;
-static u8 gu8_phone_con_test = 0;
 
 static void connect_and_connectable_switch(void *_sw)
 {
@@ -519,7 +550,6 @@ __again:
         if (bt_user_priv_var.auto_connection_counter > 0) {
             // 回连手机
 
-            gu8_phone_con_test = 1;
             if (0 == gu8_connet_phone_tone)
             {
                 gu8_connet_phone_tone = 1;
@@ -562,15 +592,9 @@ __again:
 
             if (gtws.state & BT_TWS_SIBLING_CONNECTED) {
                 //TODO这里做耳机是否可以被手机发现，如果没有手机连接地址的话，开可发现，否则不开
-                if (gu8_phone_con_test == 0)
+                if (get_current_poweron_memory_search_index(NULL) == 0)
                 {
                     tws_api_wait_pair_by_code(bt_get_tws_device_indicate(NULL), bt_get_local_name(), 0);
-                }
-                else
-                {
-                   tws_api_cancle_wait_pair();
-                   user_send_cmd_prepare(USER_CTRL_WRITE_SCAN_DISABLE, 0, NULL);
-                   user_send_cmd_prepare(USER_CTRL_WRITE_CONN_ENABLE, 0, NULL);
                 }
 
                 tws_sniff_controle_check_enable();
@@ -587,23 +611,17 @@ __again:
         }
     }
 
-    log_info("switch: sw%d p%d\n", sw, gu8_phone_con_test);
+    log_info("switch: sw%d\n", sw);
 
 
     if (sw == 1) {
-        /* if ((bt_user_priv_var.auto_connection_counter <= 0) && gu8_phone_con_test)
-        {
-            user_send_cmd_prepare(USER_CTRL_WRITE_SCAN_DISABLE, 0, NULL);
-            user_send_cmd_prepare(USER_CTRL_WRITE_CONN_ENABLE, 0, NULL);
-            log_info("switch: ppp\n");
-        } */
-        if (gu8_phone_con_test)
-        {
-            tws_api_cancle_wait_pair();
-            user_send_cmd_prepare(USER_CTRL_WRITE_SCAN_DISABLE, 0, NULL);
-            user_send_cmd_prepare(USER_CTRL_WRITE_CONN_ENABLE, 0, NULL);
-        }
-        else
+        // if (gu8_phone_con_test)
+        // {
+        //     tws_api_cancle_wait_pair();
+        //     user_send_cmd_prepare(USER_CTRL_WRITE_SCAN_DISABLE, 0, NULL);
+        //     user_send_cmd_prepare(USER_CTRL_WRITE_CONN_ENABLE, 0, NULL);
+        // }
+        // else
         {
             // log_info("switch: ppp1\n");
             tws_api_wait_pair_by_code(bt_get_tws_device_indicate(NULL), bt_get_local_name(), 0);
@@ -2093,6 +2111,13 @@ static void play_tone_at_same_time(int tone_name, int err)
         if (!app_var.goto_poweroff_flag) {
             tone_play_index(p_tone->bt_disconnect, 1);
         }
+
+        if (user_ctrl_write_scan_disable_flag)
+        {
+            bt_user_ctrl_write_scan_enable();
+        }
+        bt_scan_disable_start();
+
         ui_update_status(STATUS_BT_DISCONN);
         break;
     case SYNC_TONE_MAX_VOL:

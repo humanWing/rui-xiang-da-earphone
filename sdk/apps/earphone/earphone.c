@@ -1342,6 +1342,17 @@ static void bt_discon_dly_handle(void *priv)
         pwm_led_clk_set((!TCFG_LOWPOWER_BTOSC_DISABLE) ? PWM_LED_CLK_RC32K : PWM_LED_CLK_BTOSC_24M);
         //pwm_led_clk_set(PWM_LED_CLK_RC32K);
         ui_update_status(STATUS_BT_DISCONN);
+
+        extern void bt_scan_disable_start(void);
+        extern void bt_user_ctrl_write_scan_enable(void);
+        extern u8 user_ctrl_write_scan_disable_flag;
+
+        if (user_ctrl_write_scan_disable_flag)
+        {
+            bt_user_ctrl_write_scan_enable();
+        }
+
+        bt_scan_disable_start();
     }
 #endif
 
@@ -1523,6 +1534,9 @@ static int bt_connction_status_event_handler(struct bt_event *bt)
         {
             extern void hearing_aid_moed_start(void);
             hearing_aid_moed_start();
+
+            extern void bt_scan_disable_start(void);
+            bt_scan_disable_start();
         }
         break;
 
