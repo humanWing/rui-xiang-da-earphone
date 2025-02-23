@@ -255,6 +255,31 @@
 EXTERN(
 _start
 
+
+
+
+tws_local_media_sync
+
+
+
+tws_acl_data_sync
+tws_event_sync
+tws_conn_sync
+tws_lmp_slot_sync
+tws_low_latency
+tws_media_sync
+tws_power_balance
+tws_sync_call
+tws_tx_sync
+tws_link_sync
+tws_afh_sync
+
+
+
+
+
+
+
 sdfile_vfs_ops
 sbc_decoder
 

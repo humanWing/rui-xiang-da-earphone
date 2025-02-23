@@ -49,6 +49,7 @@ static const char *const tone_index[] = {
     TONE_NEW_VOL_LEVEL_2,
     TONE_NEW_VOL_LEVEL_3,
     TONE_NEW_VOL_LEVEL_4,
+    TONE_NEW_TWS_CONNECT,
 };
 
 /*

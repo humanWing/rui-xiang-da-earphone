@@ -27,10 +27,11 @@ typedef enum {
     STATUS_EXIT_LOWPOWER,
     STATUS_NORMAL_POWER,
     STATUS_POWER_NULL,
-    STATUS_BT_TWS_START,
+    STATUS_BT_TWS_START,                // 没有tws信息，开始配对
     STATUS_BT_CON_TIMEOUT,
     STATUS_RECOVER_FACTORY,
-    STATUS_BT_TWS_START_HAVE_INFO,
+    STATUS_BT_TWS_START_HAVE_INFO,      // 有tws信息，开始配对
+    STATUS_BT_DUT_TEST_MODE,            // dut模式
 } UI_STATUS;
 
 

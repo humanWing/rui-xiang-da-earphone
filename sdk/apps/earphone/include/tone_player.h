@@ -59,6 +59,8 @@
 #define TONE_NEW_VOL_LEVEL_3    SDFILE_RES_ROOT_PATH"tone/nvol3.*"
 #define TONE_NEW_VOL_LEVEL_4    SDFILE_RES_ROOT_PATH"tone/nvol4.*"
 
+#define TONE_NEW_TWS_CONNECT    SDFILE_RES_ROOT_PATH"tone/nera_pa.*"
+
 /*
 
 #define TONE_LOW_POWER			SDFILE_RES_ROOT_PATH"tone/c_power_low.*"
@@ -154,7 +156,7 @@ enum {
     IDEX_TONE_HEARING_AID_MID_NS,
     IDEX_TONE_HEARING_AID_HIGH_NS,
     IDEX_TONE_PAIRING,
-    IDEX_TONE_DU,               // 嘟一声
+    IDEX_TONE_HEARING_OPEN,     // 辅听open
     IDEX_BIG_SOUR,              // 新最大音量
     IDEX_NEW_LOW_POWER,         // 新低电
     IDEX_NEW_COMMING,           // 新来电
@@ -167,6 +169,7 @@ enum {
     IDEX_NEW_VOL_LEVEL_3,       // 音量等级3
     IDEX_NEW_VOL_LEVEL_4,       // 音量等级4
 
+    IDEX_NEW_TWS_CONNECT,       // tws连接
 
     IDEX_TONE_NONE = 0xFF,
 };

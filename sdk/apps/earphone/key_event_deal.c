@@ -413,13 +413,25 @@ int app_earphone_key_event_handler(struct sys_event *event)
 
         if ((get_call_status() == BT_CALL_OUTGOING) ||
             (get_call_status() == BT_CALL_ALERT)) {
-            user_send_cmd_prepare(USER_CTRL_HFP_CALL_HANGUP, 0, NULL);
+            // user_send_cmd_prepare(USER_CTRL_HFP_CALL_HANGUP, 0, NULL);
         } else if (get_call_status() == BT_CALL_INCOMING) {
-            user_send_cmd_prepare(USER_CTRL_HFP_CALL_ANSWER, 0, NULL);
+            // user_send_cmd_prepare(USER_CTRL_HFP_CALL_ANSWER, 0, NULL);
         } else if (get_call_status() == BT_CALL_ACTIVE) {
-            user_send_cmd_prepare(USER_CTRL_HFP_CALL_HANGUP, 0, NULL);
+            // user_send_cmd_prepare(USER_CTRL_HFP_CALL_HANGUP, 0, NULL);
         } else {
+            log_info("get_call_status%d\n", get_call_status(), a2dp_get_status());
+            
+            if (BT_STATUS_TAKEING_PHONE != get_bt_connect_status())
+            {
+                if (a2dp_get_status() == BT_MUSIC_STATUS_STARTING)
+                {
+                    user_send_cmd_prepare(USER_CTRL_AVCTP_OPID_PAUSE, 0, NULL);
+                }
+                else
+                {
             user_send_cmd_prepare(USER_CTRL_AVCTP_OPID_PLAY, 0, NULL);
+                }
+            }
         }
         break;
 

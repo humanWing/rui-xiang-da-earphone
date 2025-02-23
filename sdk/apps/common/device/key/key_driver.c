@@ -171,7 +171,9 @@ static void key_driver_scan(void *_scan_para)
 #endif
                 if (scan_para->click_delay_cnt > scan_para->click_delay_time) { //按键被抬起后延时到
                     //TODO: 在此可以添加任意多击事件
-                    if (scan_para->click_cnt >= 5) {
+                    if (scan_para->click_cnt >= 6) {
+                        key_event = KEY_EVENT_FIX_CLICK;  // 6击
+                    } else if (scan_para->click_cnt >= 5) {
                         key_event = KEY_EVENT_FIRTH_CLICK;  //五击
                     } else if (scan_para->click_cnt >= 4) {
                         key_event = KEY_EVENT_FOURTH_CLICK;  //4击

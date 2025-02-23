@@ -62,19 +62,19 @@ void board_power_init(void);
 STATUS_CONFIG status_config = {
     //灯状态设置    // led0: blue led1:red
         .led = {
-        .charge_start  = PWM_LED0_BREATHE,
+        .charge_start  = PWM_LED1_ON,
         .charge_full   = PWM_ONE_LED_BRIGHT_5S,     // 需要重新做
         .power_on      = PWM_ONE_LED_BRIGHT_1S,     // 需要重新做
         .power_off     = PWM_ONE_LED_BRIGHT_3S,     // 需要重新做
-        .lowpower      = PWM_LED1_ONE_FLASH_3S,
+        .lowpower      = PWM_LED1_DOUBLE_FLASH_5S,
         .max_vol       = PWM_LED_NULL,
         .phone_in      = PWM_LED_NULL,
         .phone_out     = PWM_LED_NULL,
         .phone_activ   = PWM_LED_NULL,
         .bt_init_ok    = PWM_LED_NULL,
         .bt_connect_ok = PWM_LED_ALL_OFF,
-        .bt_disconnect = PWM_LED0_SLOW_FLASH,
-        .tws_connect_ok = PWM_LED0_SLOW_FLASH,
+        .bt_disconnect = PWM_LED0_LED1_SLOW_FLASH,
+        .tws_connect_ok = PWM_LED0_LED1_SLOW_FLASH,
         .tws_disconnect = PWM_LED_NULL,
     },
     //提示音设置
@@ -91,7 +91,7 @@ STATUS_CONFIG status_config = {
         .bt_init_ok    = IDEX_TONE_NONE,
         .bt_connect_ok = IDEX_TONE_BT_CONN,
         .bt_disconnect = IDEX_TONE_BT_DISCONN,
-        .tws_connect_ok   = IDEX_TONE_DU,
+        .tws_connect_ok   = IDEX_NEW_TWS_CONNECT,
         .tws_disconnect   = IDEX_TONE_NONE,
         .hearing_aid_low_ns = IDEX_TONE_HEARING_AID_LOW_NS,
         .hearing_aid_mid_ns = IDEX_TONE_HEARING_AID_MID_NS,
@@ -140,12 +140,18 @@ u8 key_table[KEY_NUM_MAX][KEY_EVENT_MAX] = {
 };
 #else
 u8 key_table[KEY_NUM_MAX][KEY_EVENT_MAX] = {
-    // SHORT                        LONG                HOLD                UP              DOUBLE                      TRIPLE                  FOURTH      FIRTH
-    {KEY_VOL_UP,                    KEY_POWEROFF,       KEY_POWEROFF_HOLD,  KEY_NULL,       KEY_HEARING_NOISE_SWITCH,   KEY_OPEN_SIRI , KEY_HEARING_AID_TOGGLE, KEY_DUT_TEST_MDOE},   //KEY_0
-    {KEY_MUSIC_PP,                  KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,                   KEY_NULL},          //KEY_1
-    {KEY_VOL_DOWN,                  KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,                   KEY_NULL},          //KEY_2
-    {KEY_VOL_UP,                    KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,                   KEY_NULL},          //KEY_2
-    {KEY_HEARING_AID_TOGGLE,        KEY_NULL,           KEY_NULL,           KEY_NULL,       KEY_NULL,                   KEY_NULL},          //KEY_2
+    //                                                                                                                                  
+    /* KEY_0 */ {
+    /* SHORT */     KEY_VOL_UP,
+    /* LONG */      KEY_POWEROFF,
+    /* HOLD */      KEY_POWEROFF_HOLD,
+    /* UP */        KEY_NULL,
+    /* DOUBLE */    KEY_MUSIC_PP,
+    /* TRIPLE */    KEY_HEARING_NOISE_SWITCH,
+    /* FOURTH */    KEY_HEARING_AID_TOGGLE ,
+    /* FIRTH */     KEY_DUT_TEST_MDOE,
+    /* FIX */       KEY_OPEN_SIRI ,
+            },
 };
 #endif
 
