@@ -285,6 +285,9 @@ void charge_close_deal(void)
     app = get_current_app();
     if (app && (!strcmp(app->name, APP_NAME_IDLE))) {
         ui_update_status(STATUS_CHARGE_CLOSE);
+        while (get_ui_busy_status()) {
+
+        }
     }
 #endif
 }
